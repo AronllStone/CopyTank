@@ -158,7 +158,6 @@ public class Level {
 	}
 
 	public boolean resloveDestructible(Rectangle rect) {
-
 		int destroyed = 0;
 		for (int i = 0; i < destructibleRects.size(); i++) {
 			if (rect.overlaps(destructibleRects.get(i))) {

@@ -43,7 +43,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
 	public static Player player;
 	public static Player player2;
-	LevelManager lvlManager;
+	public static LevelManager lvlManager;
 	BitmapFont font;
 
 	int Lives = 3;
@@ -78,7 +78,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		arrowRight = new Texture(Gdx.files.internal("ArrowRight.png"));
 		spriteSheet = new Texture(Gdx.files.internal("TanksSpriteSheet.png"));
 		lvlManager = new LevelManager(spriteSheet, 1);
-		player = new Player(spriteSheet, Level.PLAYER_START_POS, 8, 8, 8, 0, 1);
+		player = new Player(spriteSheet, Level.PLAYER_START_POS, 8, 8, 8, 3, 1);
 		//player2 = new Player(spriteSheet, Level.PLAYER_START_POS2, 8, 8, 8, 0, 1);
 		shootTimer = 0;
 		//shootTimer2 = 0;
@@ -94,7 +94,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		livesTimer++;
 		if (player.isAlive() == false & Lives > 1 & livesTimer > 100) {
 			Lives--;
-			player = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 0, 1);
+			player = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 3, 1);
 			livesTimer = 0;
 		}
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -148,7 +148,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				for (int j = 0; j < lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().size(); j++) {
 					if (lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().get(j).getCollisionRect().overlaps(player.getCollisionRect())) {
 						lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().get(j).setAlive(false);
-						System.out.println("Player down");
+						//System.out.println("Player down");
 						player.setAlive(false);
 						livesTimer = 0;
 						//TODO: Add logic to remove player
