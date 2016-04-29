@@ -76,9 +76,9 @@ public class GameScreen extends ApplicationAdapter implements Screen{
        spriteSheet = new Texture(Gdx.files.internal("TanksSpriteSheet.png"));
        lvlManager = new LevelManager(spriteSheet, 1);
        player = new Player(spriteSheet, Level.PLAYER_START_POS, 8, 8, 8, 0, 1);
-       player2 = new Player(spriteSheet, Level.PLAYER_START_POS2, 8, 8, 8, 0, 1);
+       //player2 = new Player(spriteSheet, Level.PLAYER_START_POS2, 8, 8, 8, 0, 1);
        shootTimer = 0;
-       shootTimer2 = 0;
+       //shootTimer2 = 0;
 
 
 		/* Change Input Processor */
@@ -135,9 +135,9 @@ public class GameScreen extends ApplicationAdapter implements Screen{
             player2.setVelocity(Player.STOPPED);
         }*/
 
-        if(lvlManager.getCurrentLevel().resolveCollisions(player2.getCollisionRect())){
-            player2.setVelocity(Player.STOPPED);
-        }
+//        if(lvlManager.getCurrentLevel().resolveCollisions(player2.getCollisionRect())){
+//            player2.setVelocity(Player.STOPPED);
+//        }
 
 	    for(int i = 0; i< lvlManager.getCurrentLevel().getEnemiesList().size(); i++){
 	    	for(int j = 0; j < lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().size(); j++){
@@ -163,7 +163,7 @@ public class GameScreen extends ApplicationAdapter implements Screen{
         }*/
 
 	    player.update(Gdx.graphics.getDeltaTime());
-		player2.update(Gdx.graphics.getDeltaTime());
+		//player2.update(Gdx.graphics.getDeltaTime());
         //System.out.println("Player " + player.isAlive());
 	    for(int i = 0; i < player.getBullets().size(); i++){
             if(lvlManager.getCurrentLevel().resloveDestructible(player.getBullets().get(i).getCollisionRect())){
@@ -184,24 +184,24 @@ public class GameScreen extends ApplicationAdapter implements Screen{
             }
         }
 
-        for(int i = 0; i < player2.getBullets().size(); i++){
-            if(lvlManager.getCurrentLevel().resloveDestructible(player2.getBullets().get(i).getCollisionRect())){
-                player2.getBullets().get(i).setAlive(false);
-                continue;
-            }
-            if(lvlManager.getCurrentLevel().resloveUnDestructible(player2.getBullets().get(i).getCollisionRect())){
-                player2.getBullets().get(i).setAlive(false);
-                continue;
-            }
-            if(lvlManager.getCurrentLevel().resloveBase(player2.getBullets().get(i).getCollisionRect())){
-                player2.getBullets().get(i).setAlive(false);
-                continue;
-            }
-            if(lvlManager.getCurrentLevel().resloveEnemyCollisions(player2.getBullets().get(i).getCollisionRect())){
-                player2.getBullets().get(i).setAlive(false);
-                continue;
-            }
-        }
+//        for(int i = 0; i < player2.getBullets().size(); i++){
+//            if(lvlManager.getCurrentLevel().resloveDestructible(player2.getBullets().get(i).getCollisionRect())){
+//                player2.getBullets().get(i).setAlive(false);
+//                continue;
+//            }
+//            if(lvlManager.getCurrentLevel().resloveUnDestructible(player2.getBullets().get(i).getCollisionRect())){
+//                player2.getBullets().get(i).setAlive(false);
+//                continue;
+//            }
+//            if(lvlManager.getCurrentLevel().resloveBase(player2.getBullets().get(i).getCollisionRect())){
+//                player2.getBullets().get(i).setAlive(false);
+//                continue;
+//            }
+//            if(lvlManager.getCurrentLevel().resloveEnemyCollisions(player2.getBullets().get(i).getCollisionRect())){
+//                player2.getBullets().get(i).setAlive(false);
+//                continue;
+//            }
+//        }
 
 	    lvlManager.update(Gdx.graphics.getDeltaTime());
 
@@ -216,7 +216,7 @@ public class GameScreen extends ApplicationAdapter implements Screen{
 
 	    batch.begin();
 	    player.draw(batch);
-        player2.draw(batch);
+        //player2.draw(batch);
 //		batch.draw(arrowUp, ((float) Gdx.graphics.getWidth()*5/32)*kX, ((float) Gdx.graphics.getHeight() - (float)Gdx.graphics.getHeight()*3/4)* kY);
 //		batch.draw(arrowDown, ((float) Gdx.graphics.getWidth()*5/32)*kX,( (float) Gdx.graphics.getHeight() - (float)Gdx.graphics.getHeight()*31/32)*kY);
 //		batch.draw(arrowLeft, ((float) Gdx.graphics.getWidth()/16)*kX, ((float) Gdx.graphics.getHeight() - (float)Gdx.graphics.getHeight()*7/8)*kY);
@@ -226,7 +226,7 @@ public class GameScreen extends ApplicationAdapter implements Screen{
 
 	    sr.begin(ShapeType.Filled);
 	    player.drawDebug(sr);
-        player2.drawDebug(sr);
+        //player2.drawDebug(sr);
 	    lvlManager.drawShapes(sr);
 	    sr.end();
 

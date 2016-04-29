@@ -91,7 +91,7 @@ public class Menu implements Screen{
 		table.add(button2).height(100);
 		table.getCell(button2).width(100);
 
-		button.addListener(new ChangeListener() {
+		button3.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
 				main.setScreen(new GameScreen());
@@ -146,7 +146,6 @@ public class Menu implements Screen{
 	@Override
 	public void dispose() {
 		stage.dispose();
-		//hello.dispose();
 		main.dispose();
 	}
 
@@ -171,10 +170,6 @@ public class Menu implements Screen{
 
 		main.batch.end();
 
-		/*if (Gdx.input.getX() == 100 & Gdx.input.getY() == 150 ){
-			this.main.setScreen(new GameScreen());
-			dispose();
-		}*/
 
 	}
 
