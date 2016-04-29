@@ -1,5 +1,6 @@
 package actors;
 
+import Screens.GameScreen;
 import Screens.GameScreenClient;
 import Screens.GameScreenServer;
 import com.badlogic.gdx.Gdx;
@@ -10,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import Screens.GameScreen;
 import managers.LevelManager;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ abstract class GameObject {
 	protected float rotation;
 
 	protected ArrayList<Bullet> bullets;
-	LevelManager lvlManager;
+	public LevelManager lvlManager = GameScreen.lvlManager;
 	GameScreen gameScreen;
 	public int screengam=0;
 
@@ -59,7 +59,7 @@ abstract class GameObject {
 		bullets = new ArrayList<Bullet>();
 		stateTime = 0f;
 		spriteSheet = new Texture(Gdx.files.internal("TanksSpriteSheet.png"));
-		lvlManager = new LevelManager(spriteSheet,screengam);
+		//lvlManager = new LevelManager(spriteSheet,screengam);
 
 		/* Load Texture Regions into Animation */
 		TextureRegion[][] tmp = TextureRegion.split(spriteSheet, spriteSheet.getWidth() /
@@ -196,7 +196,6 @@ abstract class GameObject {
 			position.add(velocity);
 			stateTime += dt;
 		}
-		//TODO System.out.println("Position = " + position);
 
 		// Update Bullet Array
 		for(int i = 0; i < bullets.size(); i++){
