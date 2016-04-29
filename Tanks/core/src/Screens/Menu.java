@@ -65,27 +65,38 @@ public class Menu implements Screen{
 		camera.setToOrtho(false, Width, Height);
 		System.out.println("GDX X = " + Gdx.graphics.getWidth() + " Y = " + Gdx.graphics.getHeight());
 		table.setPosition(Width/2,Height/2);
-
-		/*ImageButton imageButton = new ImageButton(skin.newDrawable("white", Color.CYAN));
-//		imageButton.add("Helo");
-		imageButton.setColor(Color.BLUE);
-		imageButton.setPosition(5,5);
-
-		stage.addActor(imageButton);*/
+//
+//		ImageButton imageButton = new ImageButton(skin.newDrawable("white", Color.CYAN));
+////		imageButton.add("Helo");
+//		imageButton.setColor(Color.BLUE);
+//		imageButton.setPosition(5,5);
+//
+//		stage.addActor(imageButton);
 		stage.addActor(table);
 		/*final TextButton StartText = new TextButton("Hello, This my first menu in this game\n", skin);
 		StartText.setTouchable(Touchable.disabled);
 		StartText.setPosition(Gdx.graphics.getWidth()*5/16, Gdx.graphics.getHeight()*15/16);*/
 
+		final TextButton button3 = new TextButton("Single Game", skin);
+		table.add(button3).height(100);
+		table.getCell(button3).width(100);
+		table.row();
 
 		final TextButton button = new TextButton("Server Game", skin);
-		//button.setSize(100,100);
 		table.add(button).height(100);
 		table.getCell(button).width(100);
 		table.row();
+
 		final TextButton button2 = new TextButton("Client Game", skin);
 		table.add(button2).height(100);
 		table.getCell(button2).width(100);
+
+		button.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
+				main.setScreen(new GameScreen());
+			}
+		});
 
 		button.addListener(new ChangeListener() {
 			@Override
@@ -97,11 +108,11 @@ public class Menu implements Screen{
 		button2.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
-				//Gdx.net.openURI("http://vk.com");
 				main.setScreen(new GameScreenClient());
 				//System.out.println("Button2 pressed");/*main.setScreen(new GameScreen());*/
 			}
 		});
+
 
 		//table.add(new Image(skin.newDrawable("white", Color.RED))).size(64);
 

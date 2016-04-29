@@ -20,8 +20,6 @@ import managers.LevelManager;
 
 import java.io.*;
 import java.net.*;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class GameScreenServer extends ApplicationAdapter implements Screen {
 
@@ -33,39 +31,16 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 	public static float kY;
 
 	public static java.net.ServerSocket serverSocket;
-	public static java.net.ServerSocket serverSocket2;
 	public static Socket client;
-	public static Socket client2;
 	public static int ClientCount = 0;
-	public static int ClientCount2 = 0;
-
 
 	public static DataInputStream in;
 	public static DataOutputStream out;
-	public static DataInputStream in2;
-	public static DataOutputStream out2;
-
 
 	public static String P1 = "STOP";
 	public static String fireP1 = "NULL";
 	public static String P2 = "STOP";
-
 	public static String fireP2 = "NULL";
-	public static String P1buf = "STOP";
-	public static String fireP1buf = "NULL";
-	public static String P2buf = "STOP";
-	public static String fireP2buf = "NULL";
-
-	public static int timeServer = 0;
-	public static int timeClient = 0;
-
-	public static Queue<String> queueTimeClient = new LinkedList<String>();
-	public static Queue<String> moveP2queue = new LinkedList<String>();
-	public static Queue<String> fireP2queue = new LinkedList<String>();
-	public static Queue<String> queueBuff = new LinkedList<String>();
-
-
-	public static int lol;
 
 	ShapeRenderer sr;
 
@@ -87,23 +62,14 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 	LevelManager lvlManager;
 	BitmapFont font;
 
+	public static int flag = 1;
+
 	int shootTimer;
 	int shootTimer2;
 	Main main;
 
 	public GameScreenServer() {
 
-		//this.setScreen(new Menu(this));
-		//Gdx.graphics.setWindowedMode(800,480);
-
-		System.out.println("GameScreen is created");
-		//System.out.println(Gdx.graphics.getDensity());
-		//double he = Gdx.graphics.getHeight()*0.7;
-		//double wi = Gdx.graphics.getWidth()* 0.7;
-		//WIDTH = Gdx.graphics.getWidth();
-		//HEIGHT = Gdx.graphics.getHeight();
-		//WIDTH = (int)wi;
-		//HEIGHT = (int)he;
 		GdxWidth = Gdx.graphics.getWidth();
 		GdxHeight = Gdx.graphics.getHeight();
 
@@ -114,29 +80,13 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 			e.printStackTrace();
 		}
 
-		/*try {
-			serverSocket2 = new java.net.ServerSocket(1526);
-		} catch (IOException e) {
-			System.out.println("Cant create socket");
-			e.printStackTrace();
-		}*/
-
-
 		WIDTH = 640;
 		HEIGHT = 360;
 		kX = (float) WIDTH / (float) GdxWidth;
 		kY = (float) HEIGHT / (float) GdxHeight;
-		//Gdx.graphics.setWindowedMode(WIDTH, HEIGHT);         //РАЗМЕР ЭКРАНА ДЛЯ DESKTOP
-		// System.out.println("gdxWidth = " + GdxWidth);
-		//System.out.println("gdxHeight = " + GdxHeight);
-		//System.out.println("Width = " + WIDTH);
-		//System.out.println("Heigth  = " + HEIGHT);
 		/* Set up the camera */
 		camera = new OrthographicCamera(WIDTH, HEIGHT);
 		camera.setToOrtho(false, WIDTH, HEIGHT);
-//        camera.zoom = 0.5f;
-//        HEIGHT = HEIGHT/2;
-//        WIDTH = WIDTH/2;
 
 		camera.update();
 
@@ -154,29 +104,7 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 		shootTimer = 0;
 		shootTimer2 = 0;
 
-		try {
-			DatagramSocket datagramSocket = new DatagramSocket(1520);
-			byte[] sendData = new byte[1024];
-			byte[] receiveData = new byte[1024];
-			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-			//datagramSocket.setSoTimeout(20);
-			datagramSocket.receive(receivePacket);
-			System.out.println("SERVER IN RECV");
-			if (receivePacket != null) {
-				System.out.println("			RECV YES");
-				InetAddress IPAddress = receivePacket.getAddress();
-				int port = receivePacket.getPort();
-				sendData = "Ready".getBytes();
-				DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-				datagramSocket.send(sendPacket);
-			}
-			System.out.println("SERVER OUT RECV");
-			datagramSocket.close();
-		} catch (SocketException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		UDPlistner();
 
 
 		try {
@@ -184,87 +112,82 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 				client = serverSocket.accept();
 				ClientCount++;
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		/*try {
-			if (ClientCount2 == 0) {
-				client2 = serverSocket2.accept();
-				client2.setSoTimeout(5);
-				ClientCount2++;
-			}
-
+		try {
+			InputStream inputStream = client.getInputStream();
+			OutputStream outputStream = client.getOutputStream();
+			in = new DataInputStream(inputStream);
+			out = new DataOutputStream(outputStream);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
-
-		Thread connectionServerUp = new ConnetctionServerUp();
-		connectionServerUp.start();
-		Thread connectionServerDown = new ConnetctionServerDown();
-		connectionServerDown.start();
-
-		/*Thread connectionServerUp2 = new ConnetctionServerUp2();
-		connectionServerUp2.start();
-		Thread connectionServerDown2 = new ConnetctionServerDown2();
-		connectionServerDown2.start();*/
-
+		}
 
 		/* Change Input Processor */
 		Gdx.input.setInputProcessor(new InputProcessor());
 	}
 
 	public void render(float a) {
+		//timeServer++;
+		try {
 
-		//System.out.println("GameScreen is render");
-		/* Clear the screen */
-
-		//System.out.println("Waiting.........");
-		timeServer++;
-		/*if (queueTimeClient.size() != 0 & queueTimeClient.size() == moveP2queue.size()) {
-			queueBuff = queueTimeClient;
-			lol = Integer.valueOf(queueTimeClient.remove());
-			if (lol <= timeServer) {
-				P2 = moveP2queue.remove();
-				fireP2 = fireP2queue.remove();
-			}
-			if (lol > timeServer) {
-				queueTimeClient = queueBuff;
-				try {
-					Thread.sleep(2500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}*/
-		/*try {
-			InputStream inputStream = client2.getInputStream();
-			OutputStream outputStream = client2.getOutputStream();
-
-			in2 = new DataInputStream(inputStream);
-			out2 = new DataOutputStream(outputStream);
-
-			if (timeClient < timeServer) {
-				System.out.println("timeClient = " + timeClient);
-				System.out.println("timeServer = " + timeServer);
-				System.out.println(in2.readUTF());
-			}
-			if (timeClient == timeServer)
-				out2.writeUTF("1");
-
-//            P2 = in.readUTF();
-//            fireP2 = in.readUTF();
-
-//            String line = in.readUTF();                                 //TODO: Принятие данных от клиента
-//            System.out.println("Client say = " + line);
-//
-//            out.writeUTF("");                                           //TODO: Отправка данных клиенту
-//            System.out.println("Text message send");
-
+			//out = new DataOutputStream(outputStream);
+			//System.out.println("AHJGJKHGKJHG");
+			String lin = in.readUTF();
+			//System.out.println("}{}{}{}{}{}{}{}{}{}{}{");
+			P2 = lin.substring(0, 4);
+			//System.out.println(P2);
+			fireP2 = lin.substring(4);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
+		}
+//		//flag = 0;
+//
+//		/*if (queueTimeClient.size() != 0 & queueTimeClient.size() == moveP2queue.size()) {
+//			queueBuff = queueTimeClient;
+//			lol = Integer.valueOf(queueTimeClient.remove());
+//			if (lol <= timeServer) {
+//				P2 = moveP2queue.remove();
+//				fireP2 = fireP2queue.remove();
+//			}
+//			if (lol > timeServer) {
+//				queueTimeClient = queueBuff;
+//				try {
+//					Thread.sleep(2500);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}*/
+//		/*try {
+//			InputStream inputStream = client2.getInputStream();
+//			OutputStream outputStream = client2.getOutputStream();
+//
+//			in2 = new DataInputStream(inputStream);
+//			out2 = new DataOutputStream(outputStream);
+//
+//			if (timeClient < timeServer) {
+//				System.out.println("timeClient = " + timeClient);
+//				System.out.println("timeServer = " + timeServer);
+//				System.out.println(in2.readUTF());
+//			}
+//			if (timeClient == timeServer)
+//				out2.writeUTF("1");
+//
+////            P2 = in.readUTF();
+////            fireP2 = in.readUTF();
+//
+////            String line = in.readUTF();                                 //TODO: Принятие данных от клиента
+////            System.out.println("Client say = " + line);
+////
+////            out.writeUTF("");                                           //TODO: Отправка данных клиенту
+////            System.out.println("Text message send");
+//
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}*/
 
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -284,10 +207,10 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 			P1 = "LEFT";
 		} else if (GameKeys.isDown(GameKeys.UP)) {
 			player.setVelocity(Player.UP);
-			P1 = "UP";
+			P1 = "UPPP";
 		} else if (GameKeys.isDown(GameKeys.RIGHT)) {
 			player.setVelocity(Player.RIGHT);
-			P1 = "RIGHT";
+			P1 = "RIGH";
 		} else if (GameKeys.isDown(GameKeys.DOWN)) {
 			player.setVelocity(Player.DOWN);
 			P1 = "DOWN";
@@ -302,9 +225,9 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 
 		if (P2.equals("LEFT")) {
 			player2.setVelocity(Player.LEFT);
-		} else if (P2.equals("UP")) {
+		} else if (P2.equals("UPPP")) {
 			player2.setVelocity(Player.UP);
-		} else if (P2.equals("RIGHT")) {
+		} else if (P2.equals("RIGH")) {
 			player2.setVelocity(Player.RIGHT);
 		} else if (P2.equals("DOWN")) {
 			player2.setVelocity(Player.DOWN);
@@ -404,10 +327,32 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
         }
         *//*TODO ОТПРАВКА ДАННЫХ НА КЛИЕНТ*/
 
-		P2buf = P2;
-		fireP2buf = fireP2;
-		P1buf = P1;
-		fireP1buf = fireP1;
+		try {
+
+			System.out.println("POPOP");
+			String line = P1 + fireP1;
+			out.writeUTF(line);
+
+			System.out.println("					OPOPOPOPOPOPO");
+//					System.out.println(fireP2);
+//
+//					moveP2queue.add(in.readUTF());
+//					fireP2queue.add(in.readUTF());
+//					queueTimeClient.add(in.readUTF());
+
+			//System.out.println("timeClient = " + timeClient);
+
+			//out.writeUTF(P1);
+			//out.writeUTF(fireP1);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+//		P2buf = P2;
+//		fireP2buf = fireP2;
+//		P1buf = P1;
+//		fireP1buf = fireP1;
 
 		/*****************************************
 		 *  			   DRAWING               *
@@ -431,173 +376,39 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 		sr.end();
 
 		lvlManager.drawLevelFor();
+		flag = 1;
+	}
+
+	public void UDPlistner() {
+		try {
+			DatagramSocket datagramSocket = new DatagramSocket(1520);
+			byte[] sendData = new byte[1024];
+			byte[] receiveData = new byte[1024];
+			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+			System.out.println("server gotov");
+			datagramSocket.receive(receivePacket);
+			System.out.println("prinal");
+			if (receivePacket != null) {
+				InetAddress IPAddress = receivePacket.getAddress();
+				int port = receivePacket.getPort();
+				sendData = "Ready".getBytes();
+				DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+				datagramSocket.send(sendPacket);
+				System.out.println("otpravil");
+			}
+			System.out.println("vyshel");
+			datagramSocket.close();
+		} catch (SocketException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void show() {
 
 	}
-
-
-	public static class ConnetctionServerDown extends Thread {
-
-		GameScreenServer gameScreenServer;
-
-		public ConnetctionServerDown() {
-		}
-
-		@Override
-		public void run() {
-
-			try {
-				while (true) {
-
-					InputStream inputStream = client.getInputStream();
-					//OutputStream outputStream = client.getOutputStream();
-
-					in = new DataInputStream(inputStream);
-					//out = new DataOutputStream(outputStream);
-
-					moveP2queue.add(in.readUTF());
-					fireP2queue.add(in.readUTF());
-					queueTimeClient.add(in.readUTF());
-
-					//System.out.println("timeClient = " + timeClient);
-
-					//out.writeUTF(P1);
-					//out.writeUTF(fireP1);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		}
-
-	}
-
-	public static class ConnetctionServerUp extends Thread {
-
-		GameScreenServer gameScreenServer;
-
-		public ConnetctionServerUp() {
-		}
-
-		@Override
-		public void run() {
-
-			try {
-				while (true) {
-
-					//InputStream inputStream = client.getInputStream();
-					OutputStream outputStream = client.getOutputStream();
-
-					//in = new DataInputStream(inputStream);
-					out = new DataOutputStream(outputStream);
-
-					//P2 = in.readUTF();
-					//fireP2 = in.readUTF();
-
-					if (!P1.equals(P1buf) | !fireP1.equals(fireP1buf)) {
-						//System.out.println("Server send comand");
-						out.writeUTF(P1);
-						out.writeUTF(fireP1);
-						out.writeUTF(String.valueOf(timeServer));
-						P2buf = P2;
-						fireP2buf = fireP2;
-						P1buf = P1;
-						fireP1buf = fireP1;
-					}
-
-
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		}
-
-	}
-
-
-
-
-
-	/*public static class ConnetctionServerDown2 extends Thread {
-
-		GameScreenServer gameScreenServer;
-
-		public ConnetctionServerDown2() {
-		}
-
-		@Override
-		public void run() {
-
-			try {
-				while (true) {
-
-					InputStream inputStream = client2.getInputStream();
-					//OutputStream outputStream = client.getOutputStream();
-
-					in2 = new DataInputStream(inputStream);
-					//out = new DataOutputStream(outputStream);
-
-					P2 = in2.readUTF();
-					fireP2 = in2.readUTF();
-
-					//out.writeUTF(P1);
-					//out.writeUTF(fireP1);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		}
-
-	}
-
-	public static class ConnetctionServerUp2 extends Thread {
-
-		GameScreenServer gameScreenServer;
-
-		public ConnetctionServerUp2() {
-		}
-
-		@Override
-		public void run() {
-
-			try {
-				while (true) {
-
-					//InputStream inputStream = client.getInputStream();
-					OutputStream outputStream = client2.getOutputStream();
-
-					//in = new DataInputStream(inputStream);
-					out2 = new DataOutputStream(outputStream);
-
-					//P2 = in.readUTF();
-					//fireP2 = in.readUTF();
-
-					if (!P1.equals(P1buf) | !fireP1.equals(fireP1buf)) {
-						//System.out.println("Server send comand");
-						out2.writeUTF(P1);
-						out2.writeUTF(fireP1);
-						P2buf = P2;
-						fireP2buf = fireP2;
-						P1buf = P1;
-						fireP1buf = fireP1;
-					}
-
-
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		}
-
-	}
-*/
-
 
 	public void resize(int width, int height) {
 
@@ -627,7 +438,7 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 
 		try {
 			client.close();
-			client2.close();
+			//client2.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

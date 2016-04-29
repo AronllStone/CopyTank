@@ -52,17 +52,7 @@ public class GameScreen extends ApplicationAdapter implements Screen{
 
    public GameScreen(){
 
-       //this.setScreen(new Menu(this));
-       //Gdx.graphics.setWindowedMode(800,480);
-
        System.out.println("GameScreen is created");
-       //System.out.println(Gdx.graphics.getDensity());
-       //double he = Gdx.graphics.getHeight()*0.7;
-       //double wi = Gdx.graphics.getWidth()* 0.7;
-       //WIDTH = Gdx.graphics.getWidth();
-       //HEIGHT = Gdx.graphics.getHeight();
-       //WIDTH = (int)wi;
-       //HEIGHT = (int)he;
        GdxWidth = Gdx.graphics.getWidth();
        GdxHeight = Gdx.graphics.getHeight();
 
@@ -71,18 +61,9 @@ public class GameScreen extends ApplicationAdapter implements Screen{
        HEIGHT = 360;
        kX = (float) WIDTH/(float)GdxWidth;
        kY = (float) HEIGHT/(float) GdxHeight;
-       //Gdx.graphics.setWindowedMode(WIDTH, HEIGHT);         //РАЗМЕР ЭКРАНА ДЛЯ DESKTOP
-      // System.out.println("gdxWidth = " + GdxWidth);
-       //System.out.println("gdxHeight = " + GdxHeight);
-       //System.out.println("Width = " + WIDTH);
-       //System.out.println("Heigth  = " + HEIGHT);
 		/* Set up the camera */
        camera = new OrthographicCamera(WIDTH,HEIGHT);
        camera.setToOrtho(false, WIDTH, HEIGHT);
-//        camera.zoom = 0.5f;
-//        HEIGHT = HEIGHT/2;
-//        WIDTH = WIDTH/2;
-
        camera.update();
 
 		/* Set up variables */
