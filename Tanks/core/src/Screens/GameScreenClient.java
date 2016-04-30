@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector2;
 import main.Main;
 import managers.GameKeys;
 import managers.InputProcessor;
@@ -62,6 +63,11 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 	public static Player player2;
 	public static LevelManager lvlManager;
 
+	public static int P1lives = 3;
+	public static int P2lives = 3;
+	public static int P1timeLives;
+	public static int P2timeLives;
+
 
 	int shootTimer;
 	int shootTimer2;
@@ -71,6 +77,7 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 
 		GdxWidth = Gdx.graphics.getWidth();
 		GdxHeight = Gdx.graphics.getHeight();
+
 		UDPsender();
 		try {
 			client = new java.net.Socket(IpADDR, 1525);
@@ -101,7 +108,7 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 		arrowRight = new Texture(Gdx.files.internal("ArrowRight.png"));
 		spriteSheet = new Texture(Gdx.files.internal("TanksSpriteSheet.png"));
 		lvlManager = new LevelManager(spriteSheet, 3);
-		player2 = new Player(spriteSheet, Level.PLAYER_START_POS, 8, 8, 8, 0, 3);
+		player2 = new Player(spriteSheet, Level.PLAYER_START_POS, 8, 8, 8, 3, 3);
 		player = new Player(spriteSheet, Level.PLAYER_START_POS2, 8, 8, 8, 0, 3);
 		shootTimer = 0;
 		shootTimer2 = 0;
@@ -112,10 +119,12 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 
 	public void UDPsender() {
 		try {
+
 			int ip1 = 0;
 			int ip2 = 0;
 			DatagramSocket datagramSocket = new DatagramSocket(1500);
 			byte[] sendData = new byte[1];
+			sendData = String.valueOf((int)Math.random() * 100).getBytes();
 			byte[] receiveData = new byte[1024];
 			for (int i = 0; i < 254; i++)
 				for (int j = 0; j < 254; j++) {
@@ -127,9 +136,8 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 					datagramSocket.send(sendPacket);
 					//System.out.println(Ip);
 				}
-			System.out.println("lol");
-			//DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("localhost"), 1520);
-			//datagramSocket.send(sendPacket);
+			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("localhost"), 1520);
+			datagramSocket.send(sendPacket);
 			while (true) {
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				datagramSocket.receive(receivePacket);
@@ -160,6 +168,21 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 			e.printStackTrace();
 		}
 
+		P1timeLives++;
+		if (!player.isAlive() & P1lives > 1 & P1timeLives > 100) {
+			P1lives--;
+			player = new Player(spriteSheet, new Vector2(120, 4), 8, 8, 8, 0, 3);
+			P1timeLives = 0;
+		}
+
+
+		P2timeLives++;
+		if (!player2.isAlive() & P2lives > 1 & P2timeLives > 100) {
+			P2lives--;
+			player2 = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 3, 3);
+			P2timeLives = 0;
+		}
+
 		/* Clear the screen */
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -171,109 +194,125 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 		 *****************************************/
 		shootTimer++;
 		shootTimer2++;
+			if (GameKeys.isDown(GameKeys.LEFT)) {
+				player.setVelocity(Player.LEFT);
+				P2 = "LEFT";
+			} else if (GameKeys.isDown(GameKeys.UP)) {
+				player.setVelocity(Player.UP);
+				P2 = "UPPP";
+			} else if (GameKeys.isDown(GameKeys.RIGHT)) {
+				player.setVelocity(Player.RIGHT);
+				P2 = "RIGH";
+			} else if (GameKeys.isDown(GameKeys.DOWN)) {
+				player.setVelocity(Player.DOWN);
+				P2 = "DOWN";
+			} else {
+				player.setVelocity(Player.STOPPED);
+				P2 = "STOP";
+			}
 
-		if (GameKeys.isDown(GameKeys.LEFT)) {
-			player.setVelocity(Player.LEFT);
-			P2 = "LEFT";
-		} else if (GameKeys.isDown(GameKeys.UP)) {
-			player.setVelocity(Player.UP);
-			P2 = "UPPP";
-		} else if (GameKeys.isDown(GameKeys.RIGHT)) {
-			player.setVelocity(Player.RIGHT);
-			P2 = "RIGH";
-		} else if (GameKeys.isDown(GameKeys.DOWN)) {
-			player.setVelocity(Player.DOWN);
-			P2 = "DOWN";
-		} else {
-			player.setVelocity(Player.STOPPED);
-			P2 = "STOP";
-		}
+			if (lvlManager.getCurrentLevel().resolveCollisions(player.getCollisionRect())) {
+				player.setVelocity(Player.STOPPED);
+			}
+			if (P1.equals("LEFT")) {
+				player2.setVelocity(Player.LEFT);
+			} else if (P1.equals("UPPP")) {
+				player2.setVelocity(Player.UP);
+			} else if (P1.equals("RIGH")) {
+				player2.setVelocity(Player.RIGHT);
+			} else if (P1.equals("DOWN")) {
+				player2.setVelocity(Player.DOWN);
+			} else {
+				player2.setVelocity(Player.STOPPED);
+			}
 
-		if (lvlManager.getCurrentLevel().resolveCollisions(player.getCollisionRect())) {
-			player.setVelocity(Player.STOPPED);
-		}
+			if (lvlManager.getCurrentLevel().resolveCollisions(player2.getCollisionRect())) {
+				player2.setVelocity(Player.STOPPED);
+			}
 
-		if (P1.equals("LEFT")) {
-			player2.setVelocity(Player.LEFT);
-		} else if (P1.equals("UPPP")) {
-			player2.setVelocity(Player.UP);
-		} else if (P1.equals("RIGH")) {
-			player2.setVelocity(Player.RIGHT);
-		} else if (P1.equals("DOWN")) {
-			player2.setVelocity(Player.DOWN);
-		} else {
-			player2.setVelocity(Player.STOPPED);
-		}
+		if (player.isAlive() && player2.isAlive())
+			for (int i = 0; i < lvlManager.getCurrentLevel().getEnemiesList().size(); i++) {
+				for (int j = 0; j < lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().size(); j++) {
 
-		if (lvlManager.getCurrentLevel().resolveCollisions(player2.getCollisionRect())) {
-			player2.setVelocity(Player.STOPPED);
-		}
+					if (player.isAlive() & lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().get(j).getCollisionRect().overlaps(player.getCollisionRect())) {
+						lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().get(j).setAlive(false);
+						//System.out.println("Player down");
+						player.setAlive(false);
+						P1timeLives = 0;
+						//TODO: Add logic to remove player
+					}
 
-		for (int i = 0; i < lvlManager.getCurrentLevel().getEnemiesList().size(); i++) {
-			for (int j = 0; j < lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().size(); j++) {
-				if (lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().get(j).getCollisionRect().overlaps(player.getCollisionRect())) {
-					lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().get(j).setAlive(false);
-					//TODO: Add logic to remove player
+					if (player2.isAlive() & lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().get(j).getCollisionRect().overlaps(player2.getCollisionRect())) {
+						lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().get(j).setAlive(false);
+						//System.out.println("Player down");
+						player2.setAlive(false);
+						P2timeLives = 0;
+						//TODO: Add logic to remove player
+					}
+
 				}
 			}
-		}
 
-		if (GameKeys.isDown(GameKeys.SPACE)) {
-			if (shootTimer > 30) {
-				player.shoot(Bullet.BULLET_PLAYER);
-				fireP2 = "FIRE";
-				shootTimer = 0;
+
+		if (player.isAlive())
+			if (GameKeys.isDown(GameKeys.SPACE)) {
+				if (shootTimer > 30) {
+					player.shoot(Bullet.BULLET_PLAYER);
+					fireP2 = "FIRE";
+					shootTimer = 0;
+				}
+			} else
+				fireP2 = "NULL";
+		if (player2.isAlive())
+			if (fireP1.equals("FIRE")) {
+				if (shootTimer2 > 30) {
+					player2.shoot(Bullet.BULLET_PLAYER);
+					shootTimer2 = 0;
+				}
 			}
-		} else
-			fireP2 = "NULL";
-
-		if (fireP1.equals("FIRE")) {
-			if (shootTimer2 > 30) {
-				player2.shoot(Bullet.BULLET_PLAYER);
-				shootTimer2 = 0;
-			}
-		}
-
-		player.update(Gdx.graphics.getDeltaTime());
-		player2.update(Gdx.graphics.getDeltaTime());
+		if (player.isAlive())
+			player.update(Gdx.graphics.getDeltaTime());
+		if (player2.isAlive())
+			player2.update(Gdx.graphics.getDeltaTime());
 		//System.out.println("Player " + player.isAlive());
-		for (int i = 0; i < player.getBullets().size(); i++) {
-			if (lvlManager.getCurrentLevel().resloveDestructible(player.getBullets().get(i).getCollisionRect())) {
-				player.getBullets().get(i).setAlive(false);
-				continue;
+		if (player.isAlive())
+			for (int i = 0; i < player.getBullets().size(); i++) {
+				if (lvlManager.getCurrentLevel().resloveDestructible(player.getBullets().get(i).getCollisionRect())) {
+					player.getBullets().get(i).setAlive(false);
+					continue;
+				}
+				if (lvlManager.getCurrentLevel().resloveUnDestructible(player.getBullets().get(i).getCollisionRect())) {
+					player.getBullets().get(i).setAlive(false);
+					continue;
+				}
+				if (lvlManager.getCurrentLevel().resloveBase(player.getBullets().get(i).getCollisionRect())) {
+					player.getBullets().get(i).setAlive(false);
+					continue;
+				}
+				if (lvlManager.getCurrentLevel().resloveEnemyCollisions(player.getBullets().get(i).getCollisionRect())) {
+					player.getBullets().get(i).setAlive(false);
+					continue;
+				}
 			}
-			if (lvlManager.getCurrentLevel().resloveUnDestructible(player.getBullets().get(i).getCollisionRect())) {
-				player.getBullets().get(i).setAlive(false);
-				continue;
+		if (player2.isAlive())
+			for (int i = 0; i < player2.getBullets().size(); i++) {
+				if (lvlManager.getCurrentLevel().resloveDestructible(player2.getBullets().get(i).getCollisionRect())) {
+					player2.getBullets().get(i).setAlive(false);
+					continue;
+				}
+				if (lvlManager.getCurrentLevel().resloveUnDestructible(player2.getBullets().get(i).getCollisionRect())) {
+					player2.getBullets().get(i).setAlive(false);
+					continue;
+				}
+				if (lvlManager.getCurrentLevel().resloveBase(player2.getBullets().get(i).getCollisionRect())) {
+					player2.getBullets().get(i).setAlive(false);
+					continue;
+				}
+				if (lvlManager.getCurrentLevel().resloveEnemyCollisions(player2.getBullets().get(i).getCollisionRect())) {
+					player2.getBullets().get(i).setAlive(false);
+					continue;
+				}
 			}
-			if (lvlManager.getCurrentLevel().resloveBase(player.getBullets().get(i).getCollisionRect())) {
-				player.getBullets().get(i).setAlive(false);
-				continue;
-			}
-			if (lvlManager.getCurrentLevel().resloveEnemyCollisions(player.getBullets().get(i).getCollisionRect())) {
-				player.getBullets().get(i).setAlive(false);
-				continue;
-			}
-		}
-
-		for (int i = 0; i < player2.getBullets().size(); i++) {
-			if (lvlManager.getCurrentLevel().resloveDestructible(player2.getBullets().get(i).getCollisionRect())) {
-				player2.getBullets().get(i).setAlive(false);
-				continue;
-			}
-			if (lvlManager.getCurrentLevel().resloveUnDestructible(player2.getBullets().get(i).getCollisionRect())) {
-				player2.getBullets().get(i).setAlive(false);
-				continue;
-			}
-			if (lvlManager.getCurrentLevel().resloveBase(player2.getBullets().get(i).getCollisionRect())) {
-				player2.getBullets().get(i).setAlive(false);
-				continue;
-			}
-			if (lvlManager.getCurrentLevel().resloveEnemyCollisions(player2.getBullets().get(i).getCollisionRect())) {
-				player2.getBullets().get(i).setAlive(false);
-				continue;
-			}
-		}
 
 		lvlManager.update(Gdx.graphics.getDeltaTime());
 
@@ -302,18 +341,18 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 		lvlManager.drawLevelBack();
 
 		batch.begin();
-		player.draw(batch);
-		player2.draw(batch);
-//		batch.draw(arrowUp, ((float) Gdx.graphics.getWidth()*5/32)*kX, ((float) Gdx.graphics.getHeight() - (float)Gdx.graphics.getHeight()*3/4)* kY);
-//		batch.draw(arrowDown, ((float) Gdx.graphics.getWidth()*5/32)*kX,( (float) Gdx.graphics.getHeight() - (float)Gdx.graphics.getHeight()*31/32)*kY);
-//		batch.draw(arrowLeft, ((float) Gdx.graphics.getWidth()/16)*kX, ((float) Gdx.graphics.getHeight() - (float)Gdx.graphics.getHeight()*7/8)*kY);
-//		batch.draw(arrowRight,((float) Gdx.graphics.getWidth()/48)*kX, ((float) Gdx.graphics.getHeight() - (float)Gdx.graphics.getHeight()*7/8)*kY);
+		if (player.isAlive())
+			player.draw(batch);
+		if (player2.isAlive())
+			player2.draw(batch);
 		lvlManager.draw(batch);
 		batch.end();
 
 		sr.begin(ShapeType.Filled);
-		player.drawDebug(sr);
-		player2.drawDebug(sr);
+		if (player.isAlive())
+			player.drawDebug(sr);
+		if (player2.isAlive())
+			player2.drawDebug(sr);
 		lvlManager.drawShapes(sr);
 		sr.end();
 

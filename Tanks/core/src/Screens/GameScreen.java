@@ -19,6 +19,8 @@ import managers.InputProcessor;
 import managers.Level;
 import managers.LevelManager;
 
+import java.util.Random;
+
 public class GameScreen extends ApplicationAdapter implements Screen {
 
 	public static int WIDTH;
@@ -44,6 +46,8 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	public static Player player;
 	public static Player player2;
 	public static LevelManager lvlManager;
+	public static Random random;
+	public static int irand=2;
 	BitmapFont font;
 
 	int Lives = 3;
@@ -80,6 +84,8 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		lvlManager = new LevelManager(spriteSheet, 1);
 		player = new Player(spriteSheet, Level.PLAYER_START_POS, 8, 8, 8, 3, 1);
 		//player2 = new Player(spriteSheet, Level.PLAYER_START_POS2, 8, 8, 8, 0, 1);
+		random = new Random();
+		random.setSeed(irand);
 		shootTimer = 0;
 		//shootTimer2 = 0;
 
@@ -89,10 +95,11 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	}
 
 	public void render(float a) {
+		random.setSeed(irand++);
 		//System.out.println("GameScreen is render");
 		/* Clear the screen */
 		livesTimer++;
-		if (player.isAlive() == false & Lives > 1 & livesTimer > 100) {
+		if (!player.isAlive() & Lives > 1 & livesTimer > 100) {
 			Lives--;
 			player = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 3, 1);
 			livesTimer = 0;
@@ -106,22 +113,22 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		 *****************************************/
 		shootTimer++;
 		shootTimer2++;
+		if (player.isAlive()) {
+			if (GameKeys.isDown(GameKeys.LEFT)) {
+				player.setVelocity(Player.LEFT);
+			} else if (GameKeys.isDown(GameKeys.UP)) {
+				player.setVelocity(Player.UP);
+			} else if (GameKeys.isDown(GameKeys.RIGHT)) {
+				player.setVelocity(Player.RIGHT);
+			} else if (GameKeys.isDown(GameKeys.DOWN)) {
+				player.setVelocity(Player.DOWN);
+			} else {
+				player.setVelocity(Player.STOPPED);
+			}
 
-		if (GameKeys.isDown(GameKeys.LEFT)) {
-			player.setVelocity(Player.LEFT);
-		} else if (GameKeys.isDown(GameKeys.UP)) {
-			player.setVelocity(Player.UP);
-		} else if (GameKeys.isDown(GameKeys.RIGHT)) {
-			player.setVelocity(Player.RIGHT);
-		} else if (GameKeys.isDown(GameKeys.DOWN)) {
-			player.setVelocity(Player.DOWN);
-		} else {
-			player.setVelocity(Player.STOPPED);
-		}
-
-		if (lvlManager.getCurrentLevel().resolveCollisions(player.getCollisionRect())) {
-			player.setVelocity(Player.STOPPED);
-		}
+			if (lvlManager.getCurrentLevel().resolveCollisions(player.getCollisionRect())) {
+				player.setVelocity(Player.STOPPED);
+			}
 
        /* if(GameKeys.isDown(GameKeys.A)){
 			player2.setVelocity(Player.LEFT);
@@ -142,7 +149,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 //        if(lvlManager.getCurrentLevel().resolveCollisions(player2.getCollisionRect())){
 //            player2.setVelocity(Player.STOPPED);
 //        }
-		if (player.isAlive())
+
 			for (int i = 0; i < lvlManager.getCurrentLevel().getEnemiesList().size(); i++) {
 				for (int j = 0; j < lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().size(); j++) {
 					if (lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().get(j).getCollisionRect().overlaps(player.getCollisionRect())) {
@@ -155,14 +162,14 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				}
 			}
 
-		if (GameKeys.isDown(GameKeys.SPACE)) {
-			if (shootTimer > 30) {
-				player.shoot(Bullet.BULLET_PLAYER);
-				shootTimer = 0;
+			if (GameKeys.isDown(GameKeys.SPACE)) {
+				if (shootTimer > 30) {
+					player.shoot(Bullet.BULLET_PLAYER);
+					shootTimer = 0;
+				}
 			}
 		}
-
-       /* if(GameKeys.isDown(GameKeys.F)){
+	   /* if(GameKeys.isDown(GameKeys.F)){
 			if(shootTimer2 > 30){
                 player2.shoot(Bullet.BULLET_PLAYER);
                 shootTimer2 = 0;

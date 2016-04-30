@@ -1,5 +1,6 @@
 package actors;
 
+import Screens.GameScreen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,7 +21,6 @@ public class Enemy extends GameObject {
 		this.screengas = screengam;
 		random = 0;
 		velocity = Vector2.Zero;
-
 		alive = true;
 
 		randomMovement();
@@ -35,7 +35,7 @@ public class Enemy extends GameObject {
 	}
 
 	public void randomMovement(){
-		random = (int)(Math.random() * 100);
+		random = (int)(GameScreen.random.nextDouble() * 100);
 
 		switch(currentFacing){
 		case LEFT:
@@ -112,13 +112,14 @@ public class Enemy extends GameObject {
 
 	@Override public void update(float dt){
 
-		if(Math.random() < .01){
+		if(GameScreen.random.nextDouble() < .01){
 			randomMovement();
 		}
-
-		if(Math.random() < .01){
+		//GameScreen.random.setSeed(GameScreen.irand++);
+		if(GameScreen.random.nextDouble() < .01){
 			shoot(Bullet.BULLET_ENEMY);
 		}
+		//GameScreen.random.setSeed(GameScreen.irand++);
 		super.update(dt);
 	}
 

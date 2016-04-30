@@ -218,7 +218,8 @@ public class Level {
 		spawnTimerCoolDown = 0;
 		enemiesLeft--;
 
-		double spawnLocationChance = Math.random();
+//		double spawnLocationChance = Math.random();
+		double spawnLocationChance = GameScreen.random.nextDouble();
 		double spawnOpportunity = 1f / spawnLocations.size();
 
 		for (int i = 1; i <= spawnLocations.size(); i++) {
