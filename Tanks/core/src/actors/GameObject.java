@@ -44,7 +44,7 @@ abstract class GameObject {
 	protected float rotation;
 
 	protected ArrayList<Bullet> bullets;
-	public LevelManager lvlManager = GameScreen.lvlManager;
+	public LevelManager lvlManager;
 	GameScreen gameScreen;
 	public int screengam=0;
 
@@ -59,6 +59,13 @@ abstract class GameObject {
 		bullets = new ArrayList<Bullet>();
 		stateTime = 0f;
 		spriteSheet = new Texture(Gdx.files.internal("TanksSpriteSheet.png"));
+		if(screengam == 1)
+			lvlManager = GameScreen.lvlManager;
+		if(screengam == 2)
+			lvlManager = GameScreenServer.lvlManager;
+		if(screengam == 3)
+			lvlManager = GameScreenClient.lvlManager;
+
 		//lvlManager = new LevelManager(spriteSheet,screengam);
 
 		/* Load Texture Regions into Animation */

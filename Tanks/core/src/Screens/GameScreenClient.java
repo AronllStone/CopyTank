@@ -60,7 +60,7 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 
 	public static Player player;
 	public static Player player2;
-	LevelManager lvlManager;
+	public static LevelManager lvlManager;
 
 
 	int shootTimer;

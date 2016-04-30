@@ -59,7 +59,7 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 	public static Player player2;
 
 
-	LevelManager lvlManager;
+	public static LevelManager lvlManager;
 	BitmapFont font;
 
 	public static int flag = 1;
