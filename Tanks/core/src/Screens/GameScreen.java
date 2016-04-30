@@ -47,7 +47,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	public static Player player2;
 	public static LevelManager lvlManager;
 	public static Random random;
-	public static int irand=2;
+	public static int irand = 2;
 	BitmapFont font;
 
 	int Lives = 3;

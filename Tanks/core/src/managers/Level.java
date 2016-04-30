@@ -219,7 +219,16 @@ public class Level {
 		enemiesLeft--;
 
 //		double spawnLocationChance = Math.random();
-		double spawnLocationChance = GameScreen.random.nextDouble();
+		double spawnLocationChance = 0;
+		if (ScreenGame == 1) {
+			spawnLocationChance = GameScreen.random.nextDouble();
+		}
+		if (ScreenGame == 2) {
+			spawnLocationChance = GameScreenServer.random.nextDouble();
+		}
+		if (ScreenGame == 3) {
+			spawnLocationChance = GameScreenClient.random.nextDouble();
+		}
 		double spawnOpportunity = 1f / spawnLocations.size();
 
 		for (int i = 1; i <= spawnLocations.size(); i++) {

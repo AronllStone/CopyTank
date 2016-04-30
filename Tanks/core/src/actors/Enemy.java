@@ -1,6 +1,8 @@
 package actors;
 
 import Screens.GameScreen;
+import Screens.GameScreenClient;
+import Screens.GameScreenServer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,7 +17,7 @@ public class Enemy extends GameObject {
 	public int screengas;
 
 	public Enemy(Texture spriteSheet, Vector2 position, int spriteSheetRows,
-			int spriteSheetCols, int numFrames, int animationStartRow, int screengam){
+				 int spriteSheetCols, int numFrames, int animationStartRow, int screengam) {
 		super(spriteSheet, position, spriteSheetRows, spriteSheetCols, numFrames, animationStartRow, screengam);
 
 		this.screengas = screengam;
@@ -26,108 +28,109 @@ public class Enemy extends GameObject {
 		randomMovement();
 	}
 
-	public boolean isAlive(){
+	public boolean isAlive() {
 		return alive;
 	}
 
-	public void setAlive(boolean b){
+	public void setAlive(boolean b) {
 		alive = b;
 	}
 
-	public void randomMovement(){
-		random = (int)(GameScreen.random.nextDouble() * 100);
+	public void randomMovement() {
+		if (screengas == 1)
+			random = (int) (GameScreen.random.nextDouble() * 100);
+		if (screengas == 2)
+			random = (int) (GameScreenServer.random.nextDouble() * 100);
+		if (screengas == 3)
+			random = (int) (GameScreenClient.random.nextDouble() * 100);
 
-		switch(currentFacing){
-		case LEFT:
-			if(random < 15){ //Turn Right
-				setVelocity(RIGHT);
-			}
-			else if(random < 30){ //Turn Down
+
+		switch (currentFacing) {
+			case LEFT:
+				if (random < 15) { //Turn Right
+					setVelocity(RIGHT);
+				} else if (random < 30) { //Turn Down
 					setVelocity(DOWN);
-			}
-			else if (random < 45){ // Turn Up
-				setVelocity(UP);
-			}
-			else{ //Idle
-				setVelocity(STOPPED);
-			}
-			break;
-		case RIGHT:
-			if(random < 15){ //Turn Left
-				setVelocity(LEFT);
-			}
-			else if(random < 30){ //Turn Down
-				setVelocity(DOWN);
-			}
-			else if (random < 45){ // Turn Up
-				setVelocity(UP);
-			}
-			else{ //Idle
-				setVelocity(STOPPED);
-			}
-			break;
-		case UP:
-			if(random < 15){ //Turn Right
-				setVelocity(RIGHT);
-			}
-			else if(random < 30){ //Turn Down
-				setVelocity(DOWN);
-			}
-			else if (random < 45){ // Turn Left
-				setVelocity(LEFT);
-			}
-			else{ //Idle
-				setVelocity(STOPPED);
-			}
-		case DOWN:
-			if(random < 15){ //Turn Right
-				setVelocity(RIGHT);
-			}
-			else if(random < 30){ //Turn Left
-				setVelocity(LEFT);
-			}
-			else if (random < 45){ // Turn Up
-				setVelocity(UP);
-			}
-			else{ //Idle
-				setVelocity(STOPPED);
-			}
-			break;
-		case IDLE:
-			if(random < 20){ //Turn Right
-				setVelocity(RIGHT);
-			}
-			else if(random < 40){ //Turn Down
-				setVelocity(DOWN);
-			}
-			else if (random < 60){ // Turn UP
-				setVelocity(UP);
-			}
-			else if (random < 80){ // Turn Left
-				setVelocity(LEFT);
-			}
-			break;
+				} else if (random < 45) { // Turn Up
+					setVelocity(UP);
+				} else { //Idle
+					setVelocity(STOPPED);
+				}
+				break;
+			case RIGHT:
+				if (random < 15) { //Turn Left
+					setVelocity(LEFT);
+				} else if (random < 30) { //Turn Down
+					setVelocity(DOWN);
+				} else if (random < 45) { // Turn Up
+					setVelocity(UP);
+				} else { //Idle
+					setVelocity(STOPPED);
+				}
+				break;
+			case UP:
+				if (random < 15) { //Turn Right
+					setVelocity(RIGHT);
+				} else if (random < 30) { //Turn Down
+					setVelocity(DOWN);
+				} else if (random < 45) { // Turn Left
+					setVelocity(LEFT);
+				} else { //Idle
+					setVelocity(STOPPED);
+				}
+			case DOWN:
+				if (random < 15) { //Turn Right
+					setVelocity(RIGHT);
+				} else if (random < 30) { //Turn Left
+					setVelocity(LEFT);
+				} else if (random < 45) { // Turn Up
+					setVelocity(UP);
+				} else { //Idle
+					setVelocity(STOPPED);
+				}
+				break;
+			case IDLE:
+				if (random < 20) { //Turn Right
+					setVelocity(RIGHT);
+				} else if (random < 40) { //Turn Down
+					setVelocity(DOWN);
+				} else if (random < 60) { // Turn UP
+					setVelocity(UP);
+				} else if (random < 80) { // Turn Left
+					setVelocity(LEFT);
+				}
+				break;
 		}
 	}
 
-	@Override public void update(float dt){
+	@Override
+	public void update(float dt) {
+		double mathRand = 0;
+		if (screengas == 1)
+			mathRand = GameScreen.random.nextDouble();
+		if (screengas == 2)
+			mathRand = GameScreenServer.random.nextDouble();
+		if (screengas == 3)
+			mathRand = GameScreenClient.random.nextDouble();
 
-		if(GameScreen.random.nextDouble() < .01){
+		if (mathRand < .01) {
 			randomMovement();
 		}
 		//GameScreen.random.setSeed(GameScreen.irand++);
-		if(GameScreen.random.nextDouble() < .01){
+		if (mathRand< .01) {
 			shoot(Bullet.BULLET_ENEMY);
 		}
 		//GameScreen.random.setSeed(GameScreen.irand++);
 		super.update(dt);
 	}
 
-	@Override public void draw(SpriteBatch batch){
+	@Override
+	public void draw(SpriteBatch batch) {
 		super.draw(batch);
 	}
 
-	@Override public void drawDebug(ShapeRenderer sr){
+	@Override
+	public void drawDebug(ShapeRenderer sr) {
 		sr.setColor(Color.RED);
 		super.drawDebug(sr);
 	}

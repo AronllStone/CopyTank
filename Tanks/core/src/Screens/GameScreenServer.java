@@ -21,6 +21,7 @@ import managers.LevelManager;
 
 import java.io.*;
 import java.net.*;
+import java.util.Random;
 
 public class GameScreenServer extends ApplicationAdapter implements Screen {
 
@@ -64,6 +65,9 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 	public static int P1timeLives;
 	public static int P2timeLives;
 
+
+	public static Random random;
+	public static int irand;
 
 	public static LevelManager lvlManager;
 	BitmapFont font;
@@ -111,7 +115,8 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 
 		UDPlistner();
 
-
+		random = new Random();
+		random.setSeed(irand);
 		try {
 			if (ClientCount == 0) {
 				client = serverSocket.accept();
@@ -136,6 +141,8 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 
 	public void render(float a) {
 		//timeServer++;
+		random.setSeed(irand++);
+
 		try {
 
 			//out = new DataOutputStream(outputStream);
@@ -319,11 +326,11 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 
 		try {
 
-			System.out.println("POPOP");
+			//System.out.println("POPOP");
 			String line = P1 + fireP1;
 			out.writeUTF(line);
 
-			System.out.println("					OPOPOPOPOPOPO");
+			//System.out.println("					OPOPOPOPOPOPO");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -364,6 +371,10 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 			datagramSocket.receive(receivePacket);
 			System.out.println("prinal");
 			if (receivePacket != null) {
+				String asd = new String(receivePacket.getData());
+				//System.out.println("-" + asd.indexOf(".") + "-");
+
+				irand = Integer.valueOf(asd.substring(0,asd.indexOf(".")));
 				InetAddress IPAddress = receivePacket.getAddress();
 				int port = receivePacket.getPort();
 				sendData = "Ready".getBytes();

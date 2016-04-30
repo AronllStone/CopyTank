@@ -24,6 +24,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Arrays;
+import java.util.Random;
 
 public class GameScreenClient extends ApplicationAdapter implements Screen {
 
@@ -68,6 +69,9 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 	public static int P1timeLives;
 	public static int P2timeLives;
 
+	public static Random random;
+	public static int irand;
+
 
 	int shootTimer;
 	int shootTimer2;
@@ -77,8 +81,10 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 
 		GdxWidth = Gdx.graphics.getWidth();
 		GdxHeight = Gdx.graphics.getHeight();
-
+		irand = (int) (Math.random() * 100);
 		UDPsender();
+		random = new Random();
+		random.setSeed(irand);
 		try {
 			client = new java.net.Socket(IpADDR, 1525);
 			OutputStream sout = client.getOutputStream();
@@ -123,8 +129,10 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 			int ip1 = 0;
 			int ip2 = 0;
 			DatagramSocket datagramSocket = new DatagramSocket(1500);
-			byte[] sendData = new byte[1];
-			sendData = String.valueOf((int)Math.random() * 100).getBytes();
+			String send = String.valueOf(irand) + ".";
+			byte[] sendData  = send.getBytes();
+//			System.out.println(irand);
+			System.out.println("sendData = " + new String(sendData));
 			byte[] receiveData = new byte[1024];
 			for (int i = 0; i < 254; i++)
 				for (int j = 0; j < 254; j++) {
@@ -157,6 +165,7 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 	}
 
 	public void render(float a) {
+		random.setSeed(irand++);
 
 		try {
 			InputStream inputStream = client.getInputStream();
@@ -194,41 +203,41 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 		 *****************************************/
 		shootTimer++;
 		shootTimer2++;
-			if (GameKeys.isDown(GameKeys.LEFT)) {
-				player.setVelocity(Player.LEFT);
-				P2 = "LEFT";
-			} else if (GameKeys.isDown(GameKeys.UP)) {
-				player.setVelocity(Player.UP);
-				P2 = "UPPP";
-			} else if (GameKeys.isDown(GameKeys.RIGHT)) {
-				player.setVelocity(Player.RIGHT);
-				P2 = "RIGH";
-			} else if (GameKeys.isDown(GameKeys.DOWN)) {
-				player.setVelocity(Player.DOWN);
-				P2 = "DOWN";
-			} else {
-				player.setVelocity(Player.STOPPED);
-				P2 = "STOP";
-			}
+		if (GameKeys.isDown(GameKeys.LEFT)) {
+			player.setVelocity(Player.LEFT);
+			P2 = "LEFT";
+		} else if (GameKeys.isDown(GameKeys.UP)) {
+			player.setVelocity(Player.UP);
+			P2 = "UPPP";
+		} else if (GameKeys.isDown(GameKeys.RIGHT)) {
+			player.setVelocity(Player.RIGHT);
+			P2 = "RIGH";
+		} else if (GameKeys.isDown(GameKeys.DOWN)) {
+			player.setVelocity(Player.DOWN);
+			P2 = "DOWN";
+		} else {
+			player.setVelocity(Player.STOPPED);
+			P2 = "STOP";
+		}
 
-			if (lvlManager.getCurrentLevel().resolveCollisions(player.getCollisionRect())) {
-				player.setVelocity(Player.STOPPED);
-			}
-			if (P1.equals("LEFT")) {
-				player2.setVelocity(Player.LEFT);
-			} else if (P1.equals("UPPP")) {
-				player2.setVelocity(Player.UP);
-			} else if (P1.equals("RIGH")) {
-				player2.setVelocity(Player.RIGHT);
-			} else if (P1.equals("DOWN")) {
-				player2.setVelocity(Player.DOWN);
-			} else {
-				player2.setVelocity(Player.STOPPED);
-			}
+		if (lvlManager.getCurrentLevel().resolveCollisions(player.getCollisionRect())) {
+			player.setVelocity(Player.STOPPED);
+		}
+		if (P1.equals("LEFT")) {
+			player2.setVelocity(Player.LEFT);
+		} else if (P1.equals("UPPP")) {
+			player2.setVelocity(Player.UP);
+		} else if (P1.equals("RIGH")) {
+			player2.setVelocity(Player.RIGHT);
+		} else if (P1.equals("DOWN")) {
+			player2.setVelocity(Player.DOWN);
+		} else {
+			player2.setVelocity(Player.STOPPED);
+		}
 
-			if (lvlManager.getCurrentLevel().resolveCollisions(player2.getCollisionRect())) {
-				player2.setVelocity(Player.STOPPED);
-			}
+		if (lvlManager.getCurrentLevel().resolveCollisions(player2.getCollisionRect())) {
+			player2.setVelocity(Player.STOPPED);
+		}
 
 		if (player.isAlive() && player2.isAlive())
 			for (int i = 0; i < lvlManager.getCurrentLevel().getEnemiesList().size(); i++) {
@@ -327,7 +336,7 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 			out = new DataOutputStream(outputStream);
 
 			String line = P2 + fireP2;
-			System.out.println("LOL");
+			//System.out.println("LOL");
 			out.writeUTF(line);
 
 		} catch (IOException e) {
