@@ -5,9 +5,11 @@ import actors.Player;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -71,6 +73,7 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 
 	public static Random random;
 	public static int irand;
+	BitmapFont font;
 
 
 	int shootTimer;
@@ -107,6 +110,7 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 
 		/* Set up variables */
 		batch = new SpriteBatch();
+		font = new BitmapFont(new FileHandle("test.fnt"), new FileHandle("test.png"), false);
 		sr = new ShapeRenderer();
 		arrowUp = new Texture(Gdx.files.internal("ArrowUp.png"));
 		arrowDown = new Texture(Gdx.files.internal("ArrowDown.png"));
@@ -130,7 +134,7 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 			int ip2 = 0;
 			DatagramSocket datagramSocket = new DatagramSocket(1500);
 			String send = String.valueOf(irand) + ".";
-			byte[] sendData  = send.getBytes();
+			byte[] sendData = send.getBytes();
 //			System.out.println(irand);
 			System.out.println("sendData = " + new String(sendData));
 			byte[] receiveData = new byte[1024];
@@ -355,16 +359,19 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 		if (player2.isAlive())
 			player2.draw(batch);
 		lvlManager.draw(batch);
+		font.draw(batch, "Lives = " + P2lives, 15, 20);
+		font.draw(batch, "Lives = " + P1lives, Gdx.graphics.getWidth() * 3 / 4 + Gdx.graphics.getWidth() * 3 / 32, 20);
 		batch.end();
 
 		sr.begin(ShapeType.Filled);
-		if (player.isAlive())
+		if (player.isAlive()) {
 			player.drawDebug(sr);
-		if (player2.isAlive())
+		}
+		if (player2.isAlive()) {
 			player2.drawDebug(sr);
+		}
 		lvlManager.drawShapes(sr);
 		sr.end();
-
 		lvlManager.drawLevelFor();
 	}
 

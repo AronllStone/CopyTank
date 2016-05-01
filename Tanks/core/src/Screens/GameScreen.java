@@ -5,6 +5,7 @@ import actors.Player;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,7 +17,6 @@ import com.badlogic.gdx.math.Vector2;
 import main.Main;
 import managers.GameKeys;
 import managers.InputProcessor;
-import managers.Level;
 import managers.LevelManager;
 
 import java.util.Random;
@@ -57,8 +57,8 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	int shootTimer2;
 	Main main;
 
-	public GameScreen() {
-
+	public GameScreen(Main gameScreen) {
+		this.main = gameScreen;
 		System.out.println("GameScreen is created");
 		GdxWidth = Gdx.graphics.getWidth();
 		GdxHeight = Gdx.graphics.getHeight();
@@ -75,6 +75,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
 		/* Set up variables */
 		batch = new SpriteBatch();
+		font = new BitmapFont(new FileHandle("test.fnt"), new FileHandle("test.png"), false);
 		sr = new ShapeRenderer();
 		arrowUp = new Texture(Gdx.files.internal("ArrowUp.png"));
 		arrowDown = new Texture(Gdx.files.internal("ArrowDown.png"));
@@ -82,7 +83,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		arrowRight = new Texture(Gdx.files.internal("ArrowRight.png"));
 		spriteSheet = new Texture(Gdx.files.internal("TanksSpriteSheet.png"));
 		lvlManager = new LevelManager(spriteSheet, 1);
-		player = new Player(spriteSheet, Level.PLAYER_START_POS, 8, 8, 8, 3, 1);
+		player = new Player(spriteSheet, new Vector2(144,4), 8, 8, 8, 3, 1);
 		//player2 = new Player(spriteSheet, Level.PLAYER_START_POS2, 8, 8, 8, 0, 1);
 		random = new Random();
 		random.setSeed(irand);
@@ -104,6 +105,10 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 			player = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 3, 1);
 			livesTimer = 0;
 		}
+//		if (!player.isAlive() & Lives == 0 & livesTimer > 100) {
+//		}
+		if(lvlManager.getCurrentLevel().getEnemiesDown() == 5)
+			lvlManager.nextLevel();											//TODO  переход на следующий уровень
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.setProjectionMatrix(camera.combined);
@@ -157,7 +162,6 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 						//System.out.println("Player down");
 						player.setAlive(false);
 						livesTimer = 0;
-						//TODO: Add logic to remove player
 					}
 				}
 			}
@@ -228,9 +232,11 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		lvlManager.drawLevelBack();
 
 		batch.begin();
-		if (player.isAlive())
+		if (player.isAlive()) {
 			player.draw(batch);
+		}
 		lvlManager.draw(batch);
+		font.draw(batch, "Lives = " + Lives, Gdx.graphics.getWidth()*3/4 + Gdx.graphics.getWidth()*3/32, 20);
 		batch.end();
 
 		sr.begin(ShapeType.Filled);
@@ -240,6 +246,8 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		sr.end();
 
 		lvlManager.drawLevelFor();
+		if (!player.isAlive() & Lives == 1)
+			this.dispose();
 	}
 
 	@Override
@@ -269,9 +277,9 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	}
 
 	public void dispose() {
-		batch.dispose();
-		spriteSheet.dispose();
-		sr.dispose();
-
+//		batch.dispose();
+//		spriteSheet.dispose();
+//		sr.dispose();
+		main.setScreen(new Menu(main));
 	}
 }

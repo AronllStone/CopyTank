@@ -5,6 +5,7 @@ import actors.Player;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -101,6 +102,7 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 
 		/* Set up variables */
 		batch = new SpriteBatch();
+		font = new BitmapFont(new FileHandle("test.fnt"), new FileHandle("test.png"), false);
 		sr = new ShapeRenderer();
 		arrowUp = new Texture(Gdx.files.internal("ArrowUp.png"));
 		arrowDown = new Texture(Gdx.files.internal("ArrowDown.png"));
@@ -347,6 +349,9 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 		if (player2.isAlive())
 			player2.draw(batch);
 		lvlManager.draw(batch);
+
+		font.draw(batch, "Lives = " + P1lives, 15, 20);
+		font.draw(batch, "Lives = " + P2lives, Gdx.graphics.getWidth() * 3 / 4 + Gdx.graphics.getWidth() * 3 / 32, 20);
 		batch.end();
 
 		sr.begin(ShapeType.Filled);
@@ -374,7 +379,7 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 				String asd = new String(receivePacket.getData());
 				//System.out.println("-" + asd.indexOf(".") + "-");
 
-				irand = Integer.valueOf(asd.substring(0,asd.indexOf(".")));
+				irand = Integer.valueOf(asd.substring(0, asd.indexOf(".")));
 				InetAddress IPAddress = receivePacket.getAddress();
 				int port = receivePacket.getPort();
 				sendData = "Ready".getBytes();
@@ -421,7 +426,6 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 		batch.dispose();
 		spriteSheet.dispose();
 		sr.dispose();
-
 		try {
 			client.close();
 			//client2.close();

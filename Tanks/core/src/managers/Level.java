@@ -45,6 +45,7 @@ public class Level {
 	private TiledMapTileLayer baseLayer;
 	private int totalEnemies;
 	private int enemiesLeft;
+	private int enemiesDown;
 
 	private ArrayList<Enemy> enemies;
 	private ArrayList<Player> players;
@@ -97,6 +98,10 @@ public class Level {
 
 	public int getNumEnemiesOnScreen() {
 		return enemies.size();
+	}
+
+	public int getEnemiesDown(){
+		return enemiesDown;
 	}
 
 	public ArrayList<Enemy> getEnemiesList() {
@@ -244,6 +249,7 @@ public class Level {
 		for (int i = 0; i < enemies.size(); i++) {
 			if (enemies.get(i).getCollisionRect().overlaps(r)) {
 				System.out.println("enemy");
+				enemiesDown++;
 				enemies.get(i).setAlive(false);
 				return true;
 			}

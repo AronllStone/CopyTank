@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import main.Main;
 
-public class Menu implements Screen{
+public class Menu implements Screen {
 
 	private int Width, Height;
 	Stage stage;
@@ -22,7 +22,7 @@ public class Menu implements Screen{
 	OrthographicCamera camera;
 	//private Table table, table2;
 
-	public Menu(Main gameScreen){
+	public Menu(Main gameScreen) {
 		this.main = gameScreen;
 		stage = new Stage();
 		skin = new Skin();
@@ -57,14 +57,14 @@ public class Menu implements Screen{
 		textButtonStyle.font = skin.getFont("default");
 		skin.add("default", textButtonStyle);
 
-	    Height = Gdx.graphics.getHeight();
+		Height = Gdx.graphics.getHeight();
 		Width = Gdx.graphics.getWidth();
 
 		Table table = new Table();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Width, Height);
-		System.out.println("GDX X = " + Gdx.graphics.getWidth() + " Y = " + Gdx.graphics.getHeight());
-		table.setPosition(Width/2,Height/2);
+		//System.out.println("GDX X = " + Gdx.graphics.getWidth() + " Y = " + Gdx.graphics.getHeight());
+		table.setPosition(Width / 2, Height / 2);
 //
 //		ImageButton imageButton = new ImageButton(skin.newDrawable("white", Color.CYAN));
 ////		imageButton.add("Helo");
@@ -77,39 +77,50 @@ public class Menu implements Screen{
 		StartText.setTouchable(Touchable.disabled);
 		StartText.setPosition(Gdx.graphics.getWidth()*5/16, Gdx.graphics.getHeight()*15/16);*/
 
-		final TextButton button3 = new TextButton("Single Game", skin);
+		final TextButton button1 = new TextButton("Single Game", skin);
+		table.add(button1).height(100);
+		table.getCell(button1).width(100);
+		table.row();
+
+		final TextButton button2 = new TextButton("Server Game", skin);
+		table.add(button2).height(100);
+		table.getCell(button2).width(100);
+		table.row();
+
+		final TextButton button3 = new TextButton("Client Game", skin);
 		table.add(button3).height(100);
 		table.getCell(button3).width(100);
 		table.row();
 
-		final TextButton button = new TextButton("Server Game", skin);
-		table.add(button).height(100);
-		table.getCell(button).width(100);
-		table.row();
+		final TextButton button4 = new TextButton("HELP", skin);
+		table.add(button4).height(50);
+		table.getCell(button4).width(100);
 
-		final TextButton button2 = new TextButton("Client Game", skin);
-		table.add(button2).height(100);
-		table.getCell(button2).width(100);
-
-		button3.addListener(new ChangeListener() {
+		button1.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
-				main.setScreen(new GameScreen());
-			}
-		});
-
-		button.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
-				main.setScreen(new GameScreenServer());
+				main.setScreen(new GameScreen(main));
 			}
 		});
 
 		button2.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
+				main.setScreen(new GameScreenServer());
+			}
+		});
+
+		button3.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
 				main.setScreen(new GameScreenClient());
-				//System.out.println("Button2 pressed");/*main.setScreen(new GameScreen());*/
+			}
+		});
+
+		button4.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
+				System.out.println("Help is called");
 			}
 		});
 
@@ -119,38 +130,6 @@ public class Menu implements Screen{
 		//stage.act(Math.min(delta, 1 / 30f));
 		//Table.drawDebug(stage);
 
-
-
-	}
-
-	@Override
-	public void resize(int width, int height) {
-
-		this.Width= Width;
-		this.Height = Height;
-
-	}
-
-	@Override
-	public void hide() {
-	}
-
-	@Override
-	public void pause() {
-	}
-
-	@Override
-	public void resume() {
-	}
-
-	@Override
-	public void dispose() {
-		stage.dispose();
-		main.dispose();
-	}
-
-	@Override
-	public void show() {
 
 	}
 
@@ -172,5 +151,39 @@ public class Menu implements Screen{
 
 
 	}
+
+	@Override
+	public void resize(int width, int height) {
+
+		this.Width = Width;
+		this.Height = Height;
+
+	}
+
+	@Override
+	public void hide() {
+	}
+
+	@Override
+	public void pause() {
+	}
+
+	@Override
+	public void resume() {
+	}
+
+	@Override
+	public void dispose() {
+		stage.dispose();
+		//main.batch.dispose();
+		main.dispose();
+	}
+
+	@Override
+	public void show() {
+
+	}
+
+
 
 }

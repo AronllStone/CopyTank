@@ -19,7 +19,7 @@ public class LevelManager {
 		levels = new ArrayList<Level>();
 		//ScreenGame = ScreenG;
 
-		testLevel = new Level("Levels/TestLevel.tmx", spriteSheet, 6, 360, ScreenG);
+		testLevel = new Level("Levels/TestLevel.tmx", spriteSheet, 5, 360, ScreenG);
 		levels.add(testLevel);
 
 		battleCity = new Level("Levels/BattleCity.tmx", spriteSheet, 5, 300, ScreenG);
