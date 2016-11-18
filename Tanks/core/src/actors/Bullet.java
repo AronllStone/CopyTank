@@ -15,7 +15,7 @@ public class Bullet{
 
 	public static final int BULLET_PLAYER = 0;
 	public static final int BULLET_ENEMY = 1;
-	public static final int RADIUS = 2;
+	public static final int RADIUS = 4;
 
 	public static final int BULLET_SPEED = 5;
 	public int screengam=0;

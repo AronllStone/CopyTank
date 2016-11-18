@@ -21,8 +21,8 @@ import java.util.ArrayList;
 public class Level {
 
 	public static final int TILE_SIZE = 16;
-	public static final Vector2 PLAYER_START_POS = new Vector2(144, 4);
-	public static final Vector2 PLAYER_START_POS2 = new Vector2(120, 4);
+	//public static final Vector2 PLAYER_START_POS = new Vector2(144, 4);
+	//public static final Vector2 PLAYER_START_POS2 = new Vector2(120, 4);
 	public static final Rectangle BaseCollision = new Rectangle(176, 0, 32, 32);
 
 	public static int[] bLayers = {0};
@@ -53,6 +53,7 @@ public class Level {
 	private int spawnTimerCoolDown;
 	private int spawnRate;
 	private int ScreenGame;
+	boolean baseIsAlive;
 
 
 	public Level(String mapName, Texture spriteSheet, int totalEnemies, int spawnRate, int ScreenGame) {
@@ -74,6 +75,7 @@ public class Level {
 
 		spawnLocations = new ArrayList<Rectangle>();
 
+		baseIsAlive = true;
 
 		this.totalEnemies = totalEnemies;
 		enemies = new ArrayList<Enemy>();
@@ -94,6 +96,10 @@ public class Level {
 
 	public int getEnemiesLeft() {
 		return enemiesLeft;
+	}
+
+	public int getTotalEnemies() {
+		return totalEnemies;
 	}
 
 	public int getNumEnemiesOnScreen() {
@@ -206,6 +212,7 @@ public class Level {
 				baseLayer.setCell((int) baseRect.get(3).x / TILE_SIZE, (int) baseRect.get(3).y / TILE_SIZE, null);
 				baseRect.clear();
 				destroyed++;
+				baseIsAlive = false;
 			}
 		}
 
@@ -216,6 +223,10 @@ public class Level {
 		return false;
 	}
 
+	public boolean baseIsAlive(){
+		return baseIsAlive;
+	}
+
 	public void spawnEnemy() {
 		if (spawnTimerCoolDown < spawnRate)
 			return;
@@ -223,17 +234,17 @@ public class Level {
 		spawnTimerCoolDown = 0;
 		enemiesLeft--;
 
-//		double spawnLocationChance = Math.random();
-		double spawnLocationChance = 0;
-		if (ScreenGame == 1) {
-			spawnLocationChance = GameScreen.random.nextDouble();
-		}
-		if (ScreenGame == 2) {
-			spawnLocationChance = GameScreenServer.random.nextDouble();
-		}
-		if (ScreenGame == 3) {
-			spawnLocationChance = GameScreenClient.random.nextDouble();
-		}
+		double spawnLocationChance = Math.random(); //TODO enemyes только для одиночной
+//		double spawnLocationChance = 0.1;
+//		if (ScreenGame == 1) {
+//			spawnLocationChance = GameScreen.random.nextDouble();
+//		}
+//		if (ScreenGame == 2) {
+//			spawnLocationChance = GameScreenServer.random.nextDouble();
+//		}
+//		if (ScreenGame == 3) {
+//			spawnLocationChance = GameScreenClient.random.nextDouble();
+//		}//
 		double spawnOpportunity = 1f / spawnLocations.size();
 
 		for (int i = 1; i <= spawnLocations.size(); i++) {

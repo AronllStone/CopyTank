@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -15,86 +16,88 @@ import main.Main;
 public class Menu implements Screen {
 
 	private int Width, Height;
+	public static BitmapFont font;
 	Stage stage;
 	Stage hello;
 	Skin skin;
 	Main main;
 	OrthographicCamera camera;
+	Texture bgTexture;
+	Texture buttonTexture;
+	Table table;
+
 	//private Table table, table2;
+	public static int ScaleWidth(int scale) {
+		int x = Gdx.graphics.getWidth() * scale / 100;
+		return x;
+	}
+	public static int ScaleHeight(int scale) {
+		int x = Gdx.graphics.getHeight() * scale / 100;
+		return x;
+	}
+
+	public static BitmapFont getFont(){
+		return font;
+	}
 
 	public Menu(Main gameScreen) {
 		this.main = gameScreen;
 		stage = new Stage();
 		skin = new Skin();
 		hello = new Stage();
-/*
-		Label nameLabel = new Label("Name:", skin);
-		TextField nameText = new TextField("TText", skin);
-		Label addressLabel = new Label("Address:", skin);
-		TextField addressText = new TextField("loo",skin);
 
-		Table table = new Table();
-		table.add(nameLabel);              // Row 0, column 0.
-		table.add(nameText).width(100);    // Row 0, column 1.
-		table.row();                       // Move to next row.
-		table.add(addressLabel);           // Row 1, column 0.
-		table.add(addressText).width(100); // Row 1, column 1.
-		   stage.addActor(table);*/
+
+		bgTexture = new Texture(Gdx.files.internal("background.png"));
+//		buttonTexture = new Texture(Gdx.files.internal("ship.png"));
+
 		Gdx.input.setInputProcessor(stage);
 
-		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA4444);
 		pixmap.setColor(Color.WHITE);
 		pixmap.fill();
 		skin.add("white", new Texture(pixmap));
-
-		skin.add("default", new BitmapFont());
+//		skin.add("Lol", buttonTexture);
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("text.ttf"));
+		FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
+		param.size = Gdx.graphics.getHeight() / 25;
+		font = generator.generateFont(param);
 
 		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
 		textButtonStyle.up = skin.newDrawable("white", Color.CLEAR);
 		textButtonStyle.down = skin.newDrawable("white", Color.DARK_GRAY);
 		textButtonStyle.checked = skin.newDrawable("white", Color.BLUE);
 		textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY);
-		textButtonStyle.font = skin.getFont("default");
+		textButtonStyle.font = font;
 		skin.add("default", textButtonStyle);
 
 		Height = Gdx.graphics.getHeight();
 		Width = Gdx.graphics.getWidth();
 
-		Table table = new Table();
+		table = new Table();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Width, Height);
-		//System.out.println("GDX X = " + Gdx.graphics.getWidth() + " Y = " + Gdx.graphics.getHeight());
-		table.setPosition(Width / 2, Height / 2);
-//
-//		ImageButton imageButton = new ImageButton(skin.newDrawable("white", Color.CYAN));
-////		imageButton.add("Helo");
-//		imageButton.setColor(Color.BLUE);
-//		imageButton.setPosition(5,5);
-//
-//		stage.addActor(imageButton);
+		table.setPosition(ScaleWidth(50), ScaleHeight(50));
 		stage.addActor(table);
-		/*final TextButton StartText = new TextButton("Hello, This my first menu in this game\n", skin);
-		StartText.setTouchable(Touchable.disabled);
-		StartText.setPosition(Gdx.graphics.getWidth()*5/16, Gdx.graphics.getHeight()*15/16);*/
 
-		final TextButton button1 = new TextButton("Single Game", skin);
+		final TextButton button1 = new TextButton("Single Player", skin);
 		table.add(button1).height(100);
-		table.getCell(button1).width(100);
+		table.getCell(button1).width(ScaleWidth(60));
+		table.row();
+		table.row();
 		table.row();
 
-		final TextButton button2 = new TextButton("Server Game", skin);
+		final TextButton button2 = new TextButton("Multiplayer", skin);
 		table.add(button2).height(100);
-		table.getCell(button2).width(100);
+		table.getCell(button2).width(ScaleWidth(60));
+		table.row();
+		table.row();
 		table.row();
 
-		final TextButton button3 = new TextButton("Client Game", skin);
+		final TextButton button3 = new TextButton("HELP", skin);
 		table.add(button3).height(100);
-		table.getCell(button3).width(100);
+		table.getCell(button3).width(ScaleWidth(60));
 		table.row();
 
-		final TextButton button4 = new TextButton("HELP", skin);
-		table.add(button4).height(50);
-		table.getCell(button4).width(100);
 
 		button1.addListener(new ChangeListener() {
 			@Override
@@ -106,31 +109,16 @@ public class Menu implements Screen {
 		button2.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
-				main.setScreen(new GameScreenServer());
+				main.setScreen(new Multiplayer(main));
 			}
 		});
 
 		button3.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
-				main.setScreen(new GameScreenClient());
+				main.setScreen(new Help(main));
 			}
 		});
-
-		button4.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
-				System.out.println("Help is called");
-			}
-		});
-
-
-		//table.add(new Image(skin.newDrawable("white", Color.RED))).size(64);
-
-		//stage.act(Math.min(delta, 1 / 30f));
-		//Table.drawDebug(stage);
-
-
 	}
 
 	@Override
@@ -141,14 +129,13 @@ public class Menu implements Screen {
 
 		camera.update();
 		//hello.draw();
-		stage.draw();
 		main.batch.setProjectionMatrix(camera.combined);
 		main.batch.begin();
+		main.batch.draw(bgTexture, 0, 0, Width, Height);
 		//main.font.draw(main.batch, "Hello my Dear Friend! Welcome to my Tanks Game", Gdx.graphics.getWidth()*5/16, Gdx.graphics.getHeight()*15/16);
 		//main.font.draw(main.batch, "Tap anywhere to begin!", 100, 100);
-
 		main.batch.end();
-
+		stage.draw();
 
 	}
 
@@ -183,7 +170,6 @@ public class Menu implements Screen {
 	public void show() {
 
 	}
-
 
 
 }

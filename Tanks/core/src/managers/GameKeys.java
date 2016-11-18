@@ -2,7 +2,7 @@ package managers;
 
 public class GameKeys {
 
-	private static final int NUM_KEYS= 10;
+	private static final int NUM_KEYS= 11;
 
 	private static boolean[] keys = new boolean[NUM_KEYS];
 	private static boolean[] pkeys = new boolean[NUM_KEYS];
@@ -17,6 +17,7 @@ public class GameKeys {
 	public static final int TOCH_LEFT= 7;
 	public static final int TOCH_RIGHT= 8;
 	public static final int TOCH_FIRE= 9;
+	public static final int GET_POS= 10;
 
 
 

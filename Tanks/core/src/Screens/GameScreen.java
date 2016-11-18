@@ -2,17 +2,13 @@ package Screens;
 
 import actors.Bullet;
 import actors.Player;
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import main.Main;
 import managers.GameKeys;
@@ -34,17 +30,23 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	public static OrthographicCamera camera;
 
 	Texture spriteSheet;
-	Texture arrowUp;
+	/*Texture arrowUp;
 	Texture arrowDown;
 	Texture arrowLeft;
-	Texture arrowRight;
+	Texture arrowRight;*/
+	public static Texture touchpad_background;
+	public static Texture touchpad_knob;
+
+	public static int back_x;
+	public static int knob_x;
+	public static int back_y;
+	public static int knob_y;
 
 
 	SpriteBatch batch;
 	ShapeRenderer sr;
 
 	public static Player player;
-	public static Player player2;
 	public static LevelManager lvlManager;
 	public static Random random;
 	public static int irand = 2;
@@ -52,12 +54,20 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
 	int Lives = 3;
 	int livesTimer;
+	String gameover;
 
 	int shootTimer;
 	int shootTimer2;
 	Main main;
 
 	public GameScreen(Main gameScreen) {
+
+/*		Vector2 vect = new Vector2(1,1);
+		System.out.println("VECT = " + vect);
+		System.out.println("String = " + vect.toString());
+		String asd = "(2.0,2.0)";
+		vect.fromString(asd);
+		System.out.println("String -> vect = " + vect);*/
 		this.main = gameScreen;
 		System.out.println("GameScreen is created");
 		GdxWidth = Gdx.graphics.getWidth();
@@ -75,17 +85,24 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
 		/* Set up variables */
 		batch = new SpriteBatch();
-		font = new BitmapFont(new FileHandle("test.fnt"), new FileHandle("test.png"), false);
+
+		//font = new BitmapFont(new FileHandle("test.fnt"), new FileHandle("test.png"), false);
+		font = new BitmapFont();
 		sr = new ShapeRenderer();
-		arrowUp = new Texture(Gdx.files.internal("ArrowUp.png"));
+
+		spriteSheet = new Texture(Gdx.files.internal("TanksSpriteSheet.png"));
+		/*arrowUp = new Texture(Gdx.files.internal("ArrowUp.png"));
 		arrowDown = new Texture(Gdx.files.internal("ArrowDown.png"));
 		arrowLeft = new Texture(Gdx.files.internal("ArrowLeft.png"));
-		arrowRight = new Texture(Gdx.files.internal("ArrowRight.png"));
-		spriteSheet = new Texture(Gdx.files.internal("TanksSpriteSheet.png"));
+		arrowRight = new Texture(Gdx.files.internal("ArrowRight.png"));*/
+		touchpad_background = new Texture(Gdx.files.internal("touchpad_background.png"));
+		touchpad_knob = new Texture(Gdx.files.internal("touchpad_knob.png"));
+
 		lvlManager = new LevelManager(spriteSheet, 1);
-		player = new Player(spriteSheet, new Vector2(144,4), 8, 8, 8, 3, 1);
+		player = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 3, 1);
 		//player2 = new Player(spriteSheet, Level.PLAYER_START_POS2, 8, 8, 8, 0, 1);
 		random = new Random();
+		irand = (int) (Math.random() * 100);
 		random.setSeed(irand);
 		shootTimer = 0;
 		//shootTimer2 = 0;
@@ -96,8 +113,8 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	}
 
 	public void render(float a) {
-		random.setSeed(irand++);
-		//System.out.println("GameScreen is render");
+
+		//random.setSeed(irand++);
 		/* Clear the screen */
 		livesTimer++;
 		if (!player.isAlive() & Lives > 1 & livesTimer > 100) {
@@ -105,10 +122,18 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 			player = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 3, 1);
 			livesTimer = 0;
 		}
-//		if (!player.isAlive() & Lives == 0 & livesTimer > 100) {
-//		}
-		if(lvlManager.getCurrentLevel().getEnemiesDown() == 5)
-			lvlManager.nextLevel();											//TODO  переход на следующий уровень
+
+		if (lvlManager.getCurrentLevel().getEnemiesDown() == lvlManager.getCurrentLevel().getTotalEnemies()) {
+			if (lvlManager.getAllLevels() == lvlManager.getCurrentLevelNumber() + 1) {
+				gameover = "You Win!";
+				this.dispose();
+			} else {
+				lvlManager.nextLevel();
+				player.setPosition(new Vector2(144, 4));
+			}
+		}
+
+
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.setProjectionMatrix(camera.combined);
@@ -117,7 +142,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		 *  			  UPDATING               *
 		 *****************************************/
 		shootTimer++;
-		shootTimer2++;
+		//shootTimer2++;
 		if (player.isAlive()) {
 			if (GameKeys.isDown(GameKeys.LEFT)) {
 				player.setVelocity(Player.LEFT);
@@ -131,6 +156,9 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				player.setVelocity(Player.STOPPED);
 			}
 
+			/*if(GameKeys.isDown(GameKeys.GET_POS))
+				System.out.println("POSSITION PLAYER = " + player.getPosition()); //TODO GET POSITION OF PLAYER
+*/
 			if (lvlManager.getCurrentLevel().resolveCollisions(player.getCollisionRect())) {
 				player.setVelocity(Player.STOPPED);
 			}
@@ -162,6 +190,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 						//System.out.println("Player down");
 						player.setAlive(false);
 						livesTimer = 0;
+						Gdx.input.vibrate(200);
 					}
 				}
 			}
@@ -221,6 +250,9 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 //            }
 //        }
 
+		if (GameKeys.isDown(GameKeys.GET_POS)) {
+			System.out.println(player.getPosition());
+		}
 		lvlManager.update(Gdx.graphics.getDeltaTime());
 
 		GameKeys.update();
@@ -232,22 +264,72 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		lvlManager.drawLevelBack();
 
 		batch.begin();
+		System.out.println("Point = " + InputProcessor.point2 );
+		if (Gdx.input.isTouched() & InputProcessor.point != 0) {
+			back_x = scaleWidth(InputProcessor.bufX) - (touchpad_background.getWidth() / 2);
+			back_y = scaleHeight(Gdx.graphics.getHeight() - InputProcessor.bufY) - (touchpad_background.getHeight() / 2);
+			knob_x = scaleWidth(Gdx.input.getX()) - (touchpad_knob.getWidth() / 2);
+			knob_y = scaleHeight(Gdx.graphics.getHeight() - Gdx.input.getY()) - (touchpad_knob.getHeight() / 2);
+			batch.draw(touchpad_background, back_x, back_y);
+			if (knob_x < back_x)
+				knob_x = back_x;
+			if (knob_x > (back_x + touchpad_background.getWidth()))
+				knob_x = (back_x + touchpad_background.getWidth()) - touchpad_knob.getWidth() / 2;
+			if (knob_y < back_y)
+				knob_y = back_y;
+			if (knob_y > (back_y + touchpad_background.getHeight()))
+				knob_y = (back_y + touchpad_background.getHeight()) - touchpad_knob.getHeight() / 2;
+			batch.draw(touchpad_knob, knob_x, knob_y);
+		}
 		if (player.isAlive()) {
 			player.draw(batch);
 		}
 		lvlManager.draw(batch);
-		font.draw(batch, "Lives = " + Lives, Gdx.graphics.getWidth()*3/4 + Gdx.graphics.getWidth()*3/32, 20);
+		font.draw(batch, "Lives = " + Lives, 550, 20);
+		font.draw(batch, "Enimes Left = " + (lvlManager.getCurrentLevel().getTotalEnemies() - lvlManager.getCurrentLevel().getEnemiesDown()), 10, 360);
 		batch.end();
 
-		sr.begin(ShapeType.Filled);
+		sr.begin(ShapeRenderer.ShapeType.Filled);
+
 		if (player.isAlive())
 			player.drawDebug(sr);
 		lvlManager.drawShapes(sr);
 		sr.end();
 
 		lvlManager.drawLevelFor();
-		if (!player.isAlive() & Lives == 1)
+
+		if (!lvlManager.getCurrentLevel().baseIsAlive()) {
+			gameover = "You Lose";
 			this.dispose();
+		}
+
+		if (!player.isAlive() & Lives == 1) {
+			gameover = "Game Over";
+			this.dispose();
+		}
+
+//		Gdx.input.setCatchBackKey(true);
+
+	}
+
+	/**
+	 * Входит размер из Gdx.graphics.getWidth , а выходит скалированный разер относительно WIDTH
+	 * <p>
+	 *
+	 * @author Jarviz
+	 */
+	public static int scaleWidth(int per) {
+		return (WIDTH * per) / Gdx.graphics.getWidth();
+	}
+
+	/**
+	 * Входит размер из Gdx.graphics.getHeight, а выходит скалированный разер относительно Height
+	 * <p>
+	 *
+	 * @author Jarviz
+	 */
+	public static int scaleHeight(int per) {
+		return (HEIGHT * per) / Gdx.graphics.getHeight();
 	}
 
 	@Override
@@ -280,6 +362,6 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 //		batch.dispose();
 //		spriteSheet.dispose();
 //		sr.dispose();
-		main.setScreen(new Menu(main));
+		main.setScreen(new Gameover(main, gameover));
 	}
 }

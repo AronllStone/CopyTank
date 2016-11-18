@@ -118,6 +118,13 @@ abstract class GameObject {
 		}
 	}
 
+	public void setPosition(Vector2 vector){
+		position = vector;
+	}
+
+	public Vector2 getPosition(){
+		return position;
+	}
 
 	/*
 	 * shoot() -- determines position and velocity(direction/speed) of a newly generated bullet

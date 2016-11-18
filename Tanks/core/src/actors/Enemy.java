@@ -15,6 +15,7 @@ public class Enemy extends GameObject {
 	private int random;
 	private boolean alive;
 	public int screengas;
+	public int shootcount;
 
 	public Enemy(Texture spriteSheet, Vector2 position, int spriteSheetRows,
 				 int spriteSheetCols, int numFrames, int animationStartRow, int screengam) {
@@ -24,6 +25,7 @@ public class Enemy extends GameObject {
 		random = 0;
 		velocity = Vector2.Zero;
 		alive = true;
+		shootcount = 0;
 
 		randomMovement();
 	}
@@ -37,6 +39,7 @@ public class Enemy extends GameObject {
 	}
 
 	public void randomMovement() {
+
 		if (screengas == 1)
 			random = (int) (GameScreen.random.nextDouble() * 100);
 		if (screengas == 2)
@@ -106,6 +109,7 @@ public class Enemy extends GameObject {
 	@Override
 	public void update(float dt) {
 		double mathRand = 0;
+		shootcount++;
 		if (screengas == 1)
 			mathRand = GameScreen.random.nextDouble();
 		if (screengas == 2)
@@ -117,8 +121,11 @@ public class Enemy extends GameObject {
 			randomMovement();
 		}
 		//GameScreen.random.setSeed(GameScreen.irand++);
-		if (mathRand< .01) {
-			shoot(Bullet.BULLET_ENEMY);
+		if (mathRand < .01) {
+			if (shootcount > 30) {
+				shoot(Bullet.BULLET_ENEMY);
+				shootcount++;
+			}
 		}
 		//GameScreen.random.setSeed(GameScreen.irand++);
 		super.update(dt);

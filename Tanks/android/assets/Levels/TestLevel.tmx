@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" nextobjectid="1">
  <tileset firstgid="1" name="Tiles" tilewidth="16" tileheight="16" tilecount="16" columns="8">
   <image source="SpriteSheet.png" width="128" height="32"/>
   <tile id="4">
@@ -30,19 +30,19 @@
    </properties>
   </tile>
  </tileset>
- <layer name="Interactable" width="40" height="30">
+ <layer name="Interactable" width="40" height="22">
   <data encoding="base64" compression="zlib">
-   eJztlcEKgCAQRLc8Vf//vykodEh3kx1NmAdz2IPOqyRFCCGEkHlcOSGnzKP7tbnmp82j/HpntB96PXp/tN/f+zVm+F1S7+39vq39vhIeQfm9dSBY5fz1vl+vfm22nLNyz3g+g9d9Qb81/azr6Vf3a/1b0H4WUtcWsw/utZKcjphT/Pxu5AwIBg==
+   eJztkksOwCAIRG27ar3/fXXTpBt0+Cg0YZJZCAIvSikpC9WPRzEkJ61fdf8inHxx+CRC+bxUQe+YMZorzSNGdkf7LhqO6HxUH46o/+RqNj8iH7LP3Li2H9Uz+Xz5Zmcvvpm8+f7yv7v4uHrrj+7ToN8qvrv7MeZrNbEQ2g==
   </data>
  </layer>
- <layer name="Foreground" width="40" height="30" visible="0">
+ <layer name="Foreground" width="40" height="22" visible="0">
   <data encoding="base64" compression="zlib">
-   eJztwTEBAAAAwqD1T20ND6AAAAAA4NcAEsAAAQ==
+   eJztwQENAAAAwqD3T20ON6AAAAB4MA3AAAE=
   </data>
  </layer>
- <layer name="Meta" width="40" height="30">
+ <layer name="Meta" width="40" height="22">
   <data encoding="base64" compression="zlib">
-   eJztlbEKwCAMRLPYbv7/55aCQofGpCFnFe5BhhtMnq2oCCGEkJ05jBztM4vSqrbqefZ8K2t+Vp7lF81oP/R6dH+03+rzLf7wK6LPjf7fUb+v1Eeh/N5mINjl/EW/b9Z8K3vOWX9nMveQ9V7Qb08/73r66X6juwXt5+GedbZa6W7uIPwu0uQEoQ==
+   eJztkksKwCAMRN1Yd73/cbupUISYSYaaCA7MQvN7aErJrYuMe3O1/DFWP57dITFv/V/5t+DDl4fPI5QvShX0ihmzud44YmR32HdhOLLzSX0skv7TKm1+Rj5kn633bD+p5+GL5dPOUXyaovl2+d9VfFb1+vaa7bcT3wP+owo4
   </data>
  </layer>
 </map>

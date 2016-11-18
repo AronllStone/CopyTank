@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" nextobjectid="1">
+ <tileset firstgid="1" name="Tiles" tilewidth="16" tileheight="16" tilecount="16" columns="8">
+  <image source="SpriteSheet.png" width="128" height="32"/>
+  <tile id="4">
+   <properties>
+    <property name="Collidable" value="True"/>
+    <property name="Destructible" value="True"/>
+   </properties>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="Spawnable" value="True"/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="BaseP" value="true"/>
+   </properties>
+  </tile>
+  <tile id="12">
+   <properties>
+    <property name="Collidable" value="True"/>
+   </properties>
+  </tile>
+  <tile id="13">
+   <properties>
+    <property name="Collidable" value="true"/>
+    <property name="UnDestructible" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Interactable" width="40" height="22">
+  <data encoding="base64" compression="zlib">
+   eJzNlEsOgCAMRFFWivc/r5BgQprCQKmUSWalDE/7cY5XyNZQcLp5ZaZm1mxeAP7ks3fl4xg98R98M2p9y+58kvNczrPINSbaI7RPLPkshGrW4huZVXROg4/WVcLXy2Ml1L9J2oyoh1vvWHoXvpqsZx8JzRt9ProHNPhqvJJZ52artUe0+Hoz0D6b5ZOoN6OnDuUOl/TOTN+tmMOUf0SfgrtW8V3R9+Bd6J+/GncOCg==
+  </data>
+ </layer>
+ <layer name="Foreground" width="40" height="22">
+  <data encoding="base64" compression="zlib">
+   eJzt0zEKAAAIw0AH//9m126CS6N44B4KRrzLUo4om3Pb1EdE73Og70Hq6/7P/ZP0vuvoG3/fDLFJEfuITYret1EBYKcBdQ==
+  </data>
+ </layer>
+ <layer name="Meta" width="40" height="22">
+  <data encoding="base64" compression="zlib">
+   eJzdlMEKwCAMQ724neb/f+4QHIxSm1o7KwvkpIantk2JV272UE72vANkSntGsyiflMutZeBHpVmrmfez8HGMhfgLvhlJd9mdz3Key7kWucdEa4TWSSRfhNCfSXwjvYrOefDRf7XwaXmihOq3ypsR1bC0J9K78PUU3ftIqN/o+ugc8ODr8Vp6nestaY548Wkz0Dyb5bNIm6H5h/cMt9TOTN2t6MOafzb/iQ+9+Q27jQvE
+  </data>
+ </layer>
+</map>
