@@ -4,10 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import main.Main;
 
 public class Help implements Screen {
@@ -66,16 +68,16 @@ public class Help implements Screen {
 		table.getCell(button1).height(Menu.ScaleHeight(10));
 		table.row();
 
-//		button1.addListener(new ChangeListener() {
-//			@Override
-//			public void changed(ChangeEvent changeEvent, Actor actor) {
+		button1.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent changeEvent, Actor actor) {
 //				System.out.println("Help = " + help);
-//				if (help == 1)
-//					help = 2;
-//				else if (help == 2)
-//					main.setScreen(new Menu(main));
-//			}
-//		});
+				if (help == 1)
+					help = 2;
+				else if (help == 2)
+					main.setScreen(new Menu(main));
+			}
+		});
 
 		//table.add(new Image(skin.newDrawable("white", Color.RED))).size(64);
 

@@ -264,12 +264,16 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		lvlManager.drawLevelBack();
 
 		batch.begin();
-		System.out.println("Point = " + InputProcessor.point2 );
-		if (Gdx.input.isTouched() & InputProcessor.point != 0) {
-			back_x = scaleWidth(InputProcessor.bufX) - (touchpad_background.getWidth() / 2);
-			back_y = scaleHeight(Gdx.graphics.getHeight() - InputProcessor.bufY) - (touchpad_background.getHeight() / 2);
+
+		if (player.isAlive()) {
+			player.draw(batch);
+		}
+		if (Gdx.input.isTouched() & InputProcessor.onAr) {
+			back_x = scaleWidth(InputProcessor.arrowX) - (touchpad_background.getWidth() / 2);
+			back_y = scaleHeight(Gdx.graphics.getHeight() - InputProcessor.arrowY) - (touchpad_background.getHeight() / 2);
 			knob_x = scaleWidth(Gdx.input.getX()) - (touchpad_knob.getWidth() / 2);
 			knob_y = scaleHeight(Gdx.graphics.getHeight() - Gdx.input.getY()) - (touchpad_knob.getHeight() / 2);
+
 			batch.draw(touchpad_background, back_x, back_y);
 			if (knob_x < back_x)
 				knob_x = back_x;
@@ -281,9 +285,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				knob_y = (back_y + touchpad_background.getHeight()) - touchpad_knob.getHeight() / 2;
 			batch.draw(touchpad_knob, knob_x, knob_y);
 		}
-		if (player.isAlive()) {
-			player.draw(batch);
-		}
+
 		lvlManager.draw(batch);
 		font.draw(batch, "Lives = " + Lives, 550, 20);
 		font.draw(batch, "Enimes Left = " + (lvlManager.getCurrentLevel().getTotalEnemies() - lvlManager.getCurrentLevel().getEnemiesDown()), 10, 360);
