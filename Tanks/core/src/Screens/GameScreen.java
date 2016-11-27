@@ -2,7 +2,11 @@ package Screens;
 
 import actors.Bullet;
 import actors.Player;
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -30,12 +34,17 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	public static OrthographicCamera camera;
 
 	Texture spriteSheet;
-	/*Texture arrowUp;
-	Texture arrowDown;
-	Texture arrowLeft;
-	Texture arrowRight;*/
 	public static Texture touchpad_background;
 	public static Texture touchpad_knob;
+
+	public static Sound au_shoot;
+	public static Sound au_boom;
+	public static Sound au_tick;
+	public static Sound au_move;
+	public static Music au_startGame;
+
+	boolean moved = false;
+	boolean movedBuf = false;
 
 	public static int back_x;
 	public static int knob_x;
@@ -91,12 +100,14 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		sr = new ShapeRenderer();
 
 		spriteSheet = new Texture(Gdx.files.internal("TanksSpriteSheet.png"));
-		/*arrowUp = new Texture(Gdx.files.internal("ArrowUp.png"));
-		arrowDown = new Texture(Gdx.files.internal("ArrowDown.png"));
-		arrowLeft = new Texture(Gdx.files.internal("ArrowLeft.png"));
-		arrowRight = new Texture(Gdx.files.internal("ArrowRight.png"));*/
 		touchpad_background = new Texture(Gdx.files.internal("touchpad_background.png"));
 		touchpad_knob = new Texture(Gdx.files.internal("touchpad_knob.png"));
+
+		au_shoot = Gdx.audio.newSound(Gdx.files.internal("Shoot.wav"));
+		au_boom = Gdx.audio.newSound(Gdx.files.internal("Boom.wav"));
+		au_move = Gdx.audio.newSound(Gdx.files.internal("Move.wav"));
+		au_tick = Gdx.audio.newSound(Gdx.files.internal("Steel.wav"));
+		au_startGame = Gdx.audio.newMusic(Gdx.files.internal("StartGame.mp3"));
 
 		lvlManager = new LevelManager(spriteSheet, 1);
 		player = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 3, 1);
@@ -110,15 +121,19 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
 		/* Change Input Processor */
 		Gdx.input.setInputProcessor(new InputProcessor());
+
+		au_startGame.play();
 	}
 
 	public void render(float a) {
+
 
 		//random.setSeed(irand++);
 		/* Clear the screen */
 		livesTimer++;
 		if (!player.isAlive() & Lives > 1 & livesTimer > 100) {
 			Lives--;
+			au_move.stop();
 			player = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 3, 1);
 			livesTimer = 0;
 		}
@@ -143,17 +158,33 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		 *****************************************/
 		shootTimer++;
 		//shootTimer2++;
+
 		if (player.isAlive()) {
 			if (GameKeys.isDown(GameKeys.LEFT)) {
 				player.setVelocity(Player.LEFT);
+				moved = true;
 			} else if (GameKeys.isDown(GameKeys.UP)) {
 				player.setVelocity(Player.UP);
+				moved = true;
 			} else if (GameKeys.isDown(GameKeys.RIGHT)) {
 				player.setVelocity(Player.RIGHT);
+				moved = true;
 			} else if (GameKeys.isDown(GameKeys.DOWN)) {
 				player.setVelocity(Player.DOWN);
+				moved = true;
 			} else {
 				player.setVelocity(Player.STOPPED);
+				moved = false;
+			}
+
+			if (moved != movedBuf) {
+				if (moved) {
+					au_move.play(0.6f);
+					au_move.loop();
+				} else {
+					au_move.stop();
+				}
+				movedBuf = moved;
 			}
 
 			/*if(GameKeys.isDown(GameKeys.GET_POS))
@@ -163,33 +194,14 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				player.setVelocity(Player.STOPPED);
 			}
 
-       /* if(GameKeys.isDown(GameKeys.A)){
-			player2.setVelocity(Player.LEFT);
-        }
-        else if(GameKeys.isDown(GameKeys.W)){
-            player2.setVelocity(Player.UP);
-        }
-        else if(GameKeys.isDown(GameKeys.D)){
-            player2.setVelocity(Player.RIGHT);
-        }
-        else if(GameKeys.isDown(GameKeys.S)){
-            player2.setVelocity(Player.DOWN);
-        }
-        else{
-            player2.setVelocity(Player.STOPPED);
-        }*/
-
-//        if(lvlManager.getCurrentLevel().resolveCollisions(player2.getCollisionRect())){
-//            player2.setVelocity(Player.STOPPED);
-//        }
-
 			for (int i = 0; i < lvlManager.getCurrentLevel().getEnemiesList().size(); i++) {
 				for (int j = 0; j < lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().size(); j++) {
 					if (lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().get(j).getCollisionRect().overlaps(player.getCollisionRect())) {
 						lvlManager.getCurrentLevel().getEnemiesList().get(i).getBullets().get(j).setAlive(false);
-						//System.out.println("Player down");
 						player.setAlive(false);
 						livesTimer = 0;
+						au_move.stop();
+						au_boom.play();
 						Gdx.input.vibrate(200);
 					}
 				}
@@ -197,62 +209,38 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
 			if (GameKeys.isDown(GameKeys.SPACE)) {
 				if (shootTimer > 30) {
+					au_shoot.play();
 					player.shoot(Bullet.BULLET_PLAYER);
 					shootTimer = 0;
 				}
 			}
 		}
-	   /* if(GameKeys.isDown(GameKeys.F)){
-			if(shootTimer2 > 30){
-                player2.shoot(Bullet.BULLET_PLAYER);
-                shootTimer2 = 0;
-            }
-        }*/
 		if (player.isAlive()) {
 			player.update(Gdx.graphics.getDeltaTime());
-			//player2.update(Gdx.graphics.getDeltaTime());
-			//System.out.println("Player " + player.isAlive());
 			for (int i = 0; i < player.getBullets().size(); i++) {
 				if (lvlManager.getCurrentLevel().resloveDestructible(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
+					au_tick.play();
 					continue;
 				}
 				if (lvlManager.getCurrentLevel().resloveUnDestructible(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
+					au_tick.play();
 					continue;
 				}
 				if (lvlManager.getCurrentLevel().resloveBase(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
+					au_tick.play();
 					continue;
 				}
 				if (lvlManager.getCurrentLevel().resloveEnemyCollisions(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
+					au_boom.play();
 					continue;
 				}
 			}
 		}
-//        for(int i = 0; i < player2.getBullets().size(); i++){
-//            if(lvlManager.getCurrentLevel().resloveDestructible(player2.getBullets().get(i).getCollisionRect())){
-//                player2.getBullets().get(i).setAlive(false);
-//                continue;
-//            }
-//            if(lvlManager.getCurrentLevel().resloveUnDestructible(player2.getBullets().get(i).getCollisionRect())){
-//                player2.getBullets().get(i).setAlive(false);
-//                continue;
-//            }
-//            if(lvlManager.getCurrentLevel().resloveBase(player2.getBullets().get(i).getCollisionRect())){
-//                player2.getBullets().get(i).setAlive(false);
-//                continue;
-//            }
-//            if(lvlManager.getCurrentLevel().resloveEnemyCollisions(player2.getBullets().get(i).getCollisionRect())){
-//                player2.getBullets().get(i).setAlive(false);
-//                continue;
-//            }
-//        }
 
-		if (GameKeys.isDown(GameKeys.GET_POS)) {
-			System.out.println(player.getPosition());
-		}
 		lvlManager.update(Gdx.graphics.getDeltaTime());
 
 		GameKeys.update();
@@ -268,7 +256,8 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		if (player.isAlive()) {
 			player.draw(batch);
 		}
-		if (Gdx.input.isTouched() & InputProcessor.onAr) {
+		if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2 & Gdx.input.getY() > Gdx.graphics.getHeight() / 2) {
+		} else if (Gdx.input.isTouched() & InputProcessor.onAr) {
 			back_x = scaleWidth(InputProcessor.arrowX) - (touchpad_background.getWidth() / 2);
 			back_y = scaleHeight(Gdx.graphics.getHeight() - InputProcessor.arrowY) - (touchpad_background.getHeight() / 2);
 			knob_x = scaleWidth(Gdx.input.getX()) - (touchpad_knob.getWidth() / 2);
@@ -310,7 +299,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 			this.dispose();
 		}
 
-//		Gdx.input.setCatchBackKey(true);
+		Gdx.input.setCatchBackKey(true);
 
 	}
 

@@ -59,7 +59,7 @@ public class Menu implements Screen {
 //		skin.add("Lol", buttonTexture);
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("text.ttf"));
 		FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-		param.size = Gdx.graphics.getHeight() / 20;
+		param.size = Gdx.graphics.getHeight() / 25;
 		font = generator.generateFont(param);
 
 		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();

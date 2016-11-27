@@ -1,6 +1,5 @@
 package managers;
 
-import Screens.GameScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
@@ -110,6 +109,7 @@ public class InputProcessor extends InputAdapter {
 			angle /= Math.PI;
 			if (screenY > arrowY)
 				angle = 360 - angle;
+
 			if (angle > 45 & angle < 135) {
 				GameKeys.setKey(GameKeys.UP, true);
 				GameKeys.setKey(GameKeys.DOWN, false);
