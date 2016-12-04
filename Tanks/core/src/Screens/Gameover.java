@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -13,6 +14,7 @@ import main.Main;
 public class Gameover implements Screen {
 
 	private int Width, Height;
+	public static BitmapFont font;
 	Stage stage;
 	Stage hello;
 	Skin skin;
@@ -32,6 +34,10 @@ public class Gameover implements Screen {
 		Pixmap pixmap = new Pixmap(2, 2, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.WHITE);
 		pixmap.fill();
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("text.ttf"));
+		FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
+		param.size = Gdx.graphics.getHeight() / 25;
+		font = generator.generateFont(param);
 		skin.add("white", new Texture(pixmap));
 
 		skin.add("default", new BitmapFont());
@@ -41,7 +47,7 @@ public class Gameover implements Screen {
 		textButtonStyle.down = skin.newDrawable("white", Color.DARK_GRAY);
 		textButtonStyle.checked = skin.newDrawable("white", Color.BLUE);
 		textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY);
-		textButtonStyle.font = skin.getFont("default");
+		textButtonStyle.font = font;
 		skin.add("default", textButtonStyle);
 
 		Height = Gdx.graphics.getHeight();
@@ -50,19 +56,8 @@ public class Gameover implements Screen {
 		Table table = new Table();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Width, Height);
-		//System.out.println("GDX X = " + Gdx.graphics.getWidth() + " Y = " + Gdx.graphics.getHeight());
 		table.setPosition(Width / 2, Height / 2);
-//
-//		ImageButton imageButton = new ImageButton(skin.newDrawable("white", Color.CYAN));
-////		imageButton.add("Helo");
-//		imageButton.setColor(Color.BLUE);
-//		imageButton.setPosition(5,5);
-//
-//		stage.addActor(imageButton);
 		stage.addActor(table);
-		/*final TextButton StartText = new TextButton("Hello, This my first menu in this game\n", skin);
-		StartText.setTouchable(Touchable.disabled);
-		StartText.setPosition(Gdx.graphics.getWidth()*5/16, Gdx.graphics.getHeight()*15/16);*/
 
 		final TextButton button1 = new TextButton(gameove, skin);
 		table.add(button1).height(100);
@@ -85,12 +80,9 @@ public class Gameover implements Screen {
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
 		camera.update();
-		//hello.draw();
 		stage.draw();
 		main.batch.setProjectionMatrix(camera.combined);
 		main.batch.begin();
-		//main.font.draw(main.batch, "Hello my Dear Friend! Welcome to my Tanks Game", Gdx.graphics.getWidth()*5/16, Gdx.graphics.getHeight()*15/16);
-		//main.font.draw(main.batch, "Tap anywhere to begin!", 100, 100);
 
 		main.batch.end();
 		if (count == 90)

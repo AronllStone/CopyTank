@@ -106,7 +106,7 @@ public class Level {
 		return enemies.size();
 	}
 
-	public int getEnemiesDown(){
+	public int getEnemiesDown() {
 		return enemiesDown;
 	}
 
@@ -223,7 +223,7 @@ public class Level {
 		return false;
 	}
 
-	public boolean baseIsAlive(){
+	public boolean baseIsAlive() {
 		return baseIsAlive;
 	}
 

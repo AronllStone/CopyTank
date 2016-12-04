@@ -42,6 +42,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	public static Sound au_tick;
 	public static Sound au_move;
 	public static Music au_startGame;
+	public static Music au_GameOver;
 
 	boolean moved = false;
 	boolean movedBuf = false;
@@ -108,6 +109,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		au_move = Gdx.audio.newSound(Gdx.files.internal("Move.wav"));
 		au_tick = Gdx.audio.newSound(Gdx.files.internal("Steel.wav"));
 		au_startGame = Gdx.audio.newMusic(Gdx.files.internal("StartGame.mp3"));
+		au_GameOver = Gdx.audio.newMusic(Gdx.files.internal("GameOver.mp3"));
 
 		lvlManager = new LevelManager(spriteSheet, 1);
 		player = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 3, 1);
@@ -225,6 +227,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				}
 				if (lvlManager.getCurrentLevel().resloveUnDestructible(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
+					player.getBullets().remove(i).setAlive(false);
 					au_tick.play();
 					continue;
 				}
@@ -251,18 +254,24 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		 *****************************************/
 		lvlManager.drawLevelBack();
 
+		sr.begin(ShapeRenderer.ShapeType.Filled);
+
+		if (player.isAlive())
+			player.drawDebug(sr);
+		lvlManager.drawShapes(sr);
+		sr.end();
 		batch.begin();
 
 		if (player.isAlive()) {
 			player.draw(batch);
 		}
+		lvlManager.draw(batch);
 		if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2 & Gdx.input.getY() > Gdx.graphics.getHeight() / 2) {
 		} else if (Gdx.input.isTouched() & InputProcessor.onAr) {
 			back_x = scaleWidth(InputProcessor.arrowX) - (touchpad_background.getWidth() / 2);
 			back_y = scaleHeight(Gdx.graphics.getHeight() - InputProcessor.arrowY) - (touchpad_background.getHeight() / 2);
 			knob_x = scaleWidth(Gdx.input.getX()) - (touchpad_knob.getWidth() / 2);
 			knob_y = scaleHeight(Gdx.graphics.getHeight() - Gdx.input.getY()) - (touchpad_knob.getHeight() / 2);
-
 			batch.draw(touchpad_background, back_x, back_y);
 			if (knob_x < back_x)
 				knob_x = back_x;
@@ -275,27 +284,24 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 			batch.draw(touchpad_knob, knob_x, knob_y);
 		}
 
-		lvlManager.draw(batch);
 		font.draw(batch, "Lives = " + Lives, 550, 20);
 		font.draw(batch, "Enimes Left = " + (lvlManager.getCurrentLevel().getTotalEnemies() - lvlManager.getCurrentLevel().getEnemiesDown()), 10, 360);
 		batch.end();
 
-		sr.begin(ShapeRenderer.ShapeType.Filled);
-
-		if (player.isAlive())
-			player.drawDebug(sr);
-		lvlManager.drawShapes(sr);
-		sr.end();
 
 		lvlManager.drawLevelFor();
 
 		if (!lvlManager.getCurrentLevel().baseIsAlive()) {
 			gameover = "You Lose";
+			stopAllSounds();
+			au_GameOver.play();
 			this.dispose();
 		}
 
 		if (!player.isAlive() & Lives == 1) {
 			gameover = "Game Over";
+			stopAllSounds();
+			au_GameOver.play();
 			this.dispose();
 		}
 
@@ -303,8 +309,16 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
 	}
 
+	void stopAllSounds(){
+		au_move.stop();
+		au_startGame.stop();
+		au_tick.stop();
+		au_boom.stop();
+		au_shoot.stop();
+	}
+
 	/**
-	 * Входит размер из Gdx.graphics.getWidth , а выходит скалированный разер относительно WIDTH
+	 * Входит размер из Gdx.graphics.getWidth в процентах , а выходит скалированный разер относительно WIDTH
 	 * <p>
 	 *
 	 * @author Jarviz
@@ -314,7 +328,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	}
 
 	/**
-	 * Входит размер из Gdx.graphics.getHeight, а выходит скалированный разер относительно Height
+	 * Входит размер из Gdx.graphics.getHeight в процентах, а выходит скалированный разер относительно Height
 	 * <p>
 	 *
 	 * @author Jarviz

@@ -78,13 +78,18 @@ public class InputProcessor extends InputAdapter {
 
 		if (screenX > Gdx.graphics.getWidth() / 2 & screenY > Gdx.graphics.getHeight() / 2) {
 		} else {
-			onAr = true;
-			if (ar == 0) {
+//			if (ar == 0) {
+//				arrowX = screenX;
+//				arrowY = screenY;
+//				ar = 1;
+//			} else {
+//				ar++;
+//			}
+			if (!onAr) {
 				arrowX = screenX;
 				arrowY = screenY;
-				ar = 1;
-			} else {
-				ar++;
+				onAr = true;
+				point2 = pointer;
 			}
 		}
 
@@ -97,69 +102,43 @@ public class InputProcessor extends InputAdapter {
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		if (screenX > Gdx.graphics.getWidth() / 2 & screenY > Gdx.graphics.getHeight() / 2) {
 		} else {
-			onAr = true;
-			double Ax = 0;
-			double Ay = arrowY;
+			//onAr = true;
+			if (pointer == point2) {
+				double Ax = 0;
+				double Ay = arrowY;
 
-			double a = Math.sqrt(Math.pow((screenX - arrowX), 2) + Math.pow((screenY - arrowY), 2));
-			double b = Math.sqrt(Math.pow((Ax - screenX), 2) + Math.pow((Ay - screenY), 2));
-			double c = Math.sqrt(Math.pow((arrowX - Ax), 2) + Math.pow((arrowY - Ay), 2));
-			double angle = (Math.pow(a, 2) + Math.pow(c, 2) - Math.pow(b, 2)) / (2 * c * a);
-			angle = Math.acos(angle) * 180;
-			angle /= Math.PI;
-			if (screenY > arrowY)
-				angle = 360 - angle;
+				double a = Math.sqrt(Math.pow((screenX - arrowX), 2) + Math.pow((screenY - arrowY), 2));
+				double b = Math.sqrt(Math.pow((Ax - screenX), 2) + Math.pow((Ay - screenY), 2));
+				double c = Math.sqrt(Math.pow((arrowX - Ax), 2) + Math.pow((arrowY - Ay), 2));
+				double angle = (Math.pow(a, 2) + Math.pow(c, 2) - Math.pow(b, 2)) / (2 * c * a);
+				angle = Math.acos(angle) * 180;
+				angle /= Math.PI;
+				if (screenY > arrowY)
+					angle = 360 - angle;
 
-			if (angle > 45 & angle < 135) {
-				GameKeys.setKey(GameKeys.UP, true);
-				GameKeys.setKey(GameKeys.DOWN, false);
-				GameKeys.setKey(GameKeys.LEFT, false);
-				GameKeys.setKey(GameKeys.RIGHT, false);
-			} else if (angle > 225 & angle < 315) {
-				GameKeys.setKey(GameKeys.DOWN, true);
-				GameKeys.setKey(GameKeys.UP, false);
-				GameKeys.setKey(GameKeys.LEFT, false);
-				GameKeys.setKey(GameKeys.RIGHT, false);
-			} else if ((angle > 315 & angle <= 360) | (angle > 0 & angle < 45)) {
-				GameKeys.setKey(GameKeys.LEFT, true);
-				GameKeys.setKey(GameKeys.UP, false);
-				GameKeys.setKey(GameKeys.DOWN, false);
-				GameKeys.setKey(GameKeys.RIGHT, false);
-			} else if (angle > 135 & angle < 225) {
-				GameKeys.setKey(GameKeys.RIGHT, true);
-				GameKeys.setKey(GameKeys.UP, false);
-				GameKeys.setKey(GameKeys.DOWN, false);
-				GameKeys.setKey(GameKeys.LEFT, false);
+				if (angle > 45 & angle < 135) {
+					GameKeys.setKey(GameKeys.UP, true);
+					GameKeys.setKey(GameKeys.DOWN, false);
+					GameKeys.setKey(GameKeys.LEFT, false);
+					GameKeys.setKey(GameKeys.RIGHT, false);
+				} else if (angle > 225 & angle < 315) {
+					GameKeys.setKey(GameKeys.DOWN, true);
+					GameKeys.setKey(GameKeys.UP, false);
+					GameKeys.setKey(GameKeys.LEFT, false);
+					GameKeys.setKey(GameKeys.RIGHT, false);
+				} else if ((angle > 315 & angle <= 360) | (angle > 0 & angle < 45)) {
+					GameKeys.setKey(GameKeys.LEFT, true);
+					GameKeys.setKey(GameKeys.UP, false);
+					GameKeys.setKey(GameKeys.DOWN, false);
+					GameKeys.setKey(GameKeys.RIGHT, false);
+				} else if (angle > 135 & angle < 225) {
+					GameKeys.setKey(GameKeys.RIGHT, true);
+					GameKeys.setKey(GameKeys.UP, false);
+					GameKeys.setKey(GameKeys.DOWN, false);
+					GameKeys.setKey(GameKeys.LEFT, false);
+				}
+				//point2 = pointer;
 			}
-
-			/*if (arrowY - 15 > screenY & arrowX - 15 < screenX & screenX < arrowX + 15) {
-				GameKeys.setKey(GameKeys.UP, true);
-				GameKeys.setKey(GameKeys.DOWN, false);
-				GameKeys.setKey(GameKeys.LEFT, false);
-				GameKeys.setKey(GameKeys.RIGHT, false);
-			} else if (arrowY + 15 < screenY & arrowX - 15 < screenX & screenX < arrowX + 15) {
-				GameKeys.setKey(GameKeys.DOWN, true);
-				GameKeys.setKey(GameKeys.UP, false);
-				GameKeys.setKey(GameKeys.LEFT, false);
-				GameKeys.setKey(GameKeys.RIGHT, false);
-			} else if (arrowX - 15 > screenX & arrowY - 15 < screenY & screenY < arrowY + 15) {
-				GameKeys.setKey(GameKeys.LEFT, true);
-				GameKeys.setKey(GameKeys.UP, false);
-				GameKeys.setKey(GameKeys.DOWN, false);
-				GameKeys.setKey(GameKeys.RIGHT, false);
-			} else if (arrowX + 15 < screenX & arrowY - 15 < screenY & screenY < arrowY + 15) {
-				GameKeys.setKey(GameKeys.RIGHT, true);
-				GameKeys.setKey(GameKeys.UP, false);
-				GameKeys.setKey(GameKeys.DOWN, false);
-				GameKeys.setKey(GameKeys.LEFT, false);
-			} else if (arrowY - 15 < screenY & arrowY + 15 > screenY & arrowX - 15 < screenX & arrowX + 15 > screenX) {
-				GameKeys.setKey(GameKeys.RIGHT, false);
-				GameKeys.setKey(GameKeys.UP, false);
-				GameKeys.setKey(GameKeys.DOWN, false);
-				GameKeys.setKey(GameKeys.LEFT, false);
-			}*/
-			point2 = pointer;
-
 		}
 		return true;
 	}
@@ -172,12 +151,16 @@ public class InputProcessor extends InputAdapter {
 			GameKeys.setKey(GameKeys.DOWN, false);
 			GameKeys.setKey(GameKeys.LEFT, false);
 			GameKeys.setKey(GameKeys.RIGHT, false);
-			if (ar == 1) {
+			if (onAr) {
 				onAr = false;
-				ar = 0;
-			} else
-				ar--;
+			}
 			point2 = 0;
+//			if (ar == 1) {
+//				onAr = false;
+//				ar = 0;
+//			} else
+//				ar--;
+//			point2 = 0;
 		}
 		if (pointer == point) {
 			//if(screenX> Gdx.graphics.getWidth()/2 & screenY > Gdx.graphics.getHeight()/2)

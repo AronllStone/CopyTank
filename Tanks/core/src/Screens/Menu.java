@@ -59,7 +59,7 @@ public class Menu implements Screen {
 //		skin.add("Lol", buttonTexture);
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("text.ttf"));
 		FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-		param.size = Gdx.graphics.getHeight() / 25;
+		param.size = Gdx.graphics.getHeight() / 20;
 		font = generator.generateFont(param);
 
 		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
@@ -86,12 +86,12 @@ public class Menu implements Screen {
 		table.row();
 		table.row();
 
-		final TextButton button2 = new TextButton("Multiplayer", skin);
-		table.add(button2).height(100);
-		table.getCell(button2).width(ScaleWidth(60));
-		table.row();
-		table.row();
-		table.row();
+//		final TextButton button2 = new TextButton("Multiplayer", skin);
+//		table.add(button2).height(100);
+//		table.getCell(button2).width(ScaleWidth(60));
+//		table.row();
+//		table.row();
+//		table.row();
 
 		final TextButton button3 = new TextButton("HELP", skin);
 		table.add(button3).height(100);
@@ -105,14 +105,14 @@ public class Menu implements Screen {
 				main.setScreen(new GameScreen(main));
 			}
 		});
-
+/*
 		button2.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
 				main.setScreen(new Multiplayer(main));
 			}
 		});
-
+*/
 		button3.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeListener.ChangeEvent changeEvent, Actor actor) {
