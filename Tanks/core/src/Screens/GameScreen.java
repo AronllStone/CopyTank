@@ -70,6 +70,8 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	int shootTimer2;
 
 	boolean backIs = false;
+	//	boolean preciousFire = false;
+//	boolean preciousFire2 = true;
 	Main main;
 
 	public GameScreen(Main gameScreen) {
@@ -209,37 +211,39 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
 			if (GameKeys.isDown(GameKeys.SPACE)) {
 				if (shootTimer > 30) {
-					au_shoot.play();
-					player.shoot(Bullet.BULLET_PLAYER);
+					if (player.getBullets().size() == 0) {
+						au_shoot.play();
+						player.shoot(Bullet.BULLET_PLAYER);
+					}
 					shootTimer = 0;
 				}
 			}
 		}
 		//if (player.isAlive()) {
-			player.update(Gdx.graphics.getDeltaTime());
-			for (int i = 0; i < player.getBullets().size(); i++) {	//TODO обработка пуль для игрока
-				if (lvlManager.getCurrentLevel().resolveDestructible(player.getBullets().get(i).getCollisionRect())) {
-					player.getBullets().get(i).setAlive(false);
-					au_tick.play();
-					continue;
-				}
-				if (lvlManager.getCurrentLevel().resolveUnDestructible(player.getBullets().get(i).getCollisionRect())) {
-					player.getBullets().get(i).setAlive(false);
-					player.getBullets().remove(i).setAlive(false);
-					au_tick.play();
-					continue;
-				}
-				if (lvlManager.getCurrentLevel().resolveBase(player.getBullets().get(i).getCollisionRect())) {
-					player.getBullets().get(i).setAlive(false);
-					au_tick.play();
-					continue;
-				}
-				if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect())) {
-					player.getBullets().get(i).setAlive(false);
+		player.update(Gdx.graphics.getDeltaTime());
+		for (int i = 0; i < player.getBullets().size(); i++) {    //TODO обработка пуль для игрока
+			if (lvlManager.getCurrentLevel().resolveDestructible(player.getBullets().get(i).getCollisionRect())) {
+				player.getBullets().get(i).setAlive(false);
+				au_tick.play();
+				continue;
+			}
+			if (lvlManager.getCurrentLevel().resolveUnDestructible(player.getBullets().get(i).getCollisionRect())) {
+				player.getBullets().get(i).setAlive(false);
+				player.getBullets().remove(i).setAlive(false);
+				au_tick.play();
+				continue;
+			}
+			if (lvlManager.getCurrentLevel().resolveBase(player.getBullets().get(i).getCollisionRect())) {
+				player.getBullets().get(i).setAlive(false);
+				au_tick.play();
+				continue;
+			}
+			if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect())) {
+				player.getBullets().get(i).setAlive(false);
 //					player.getBullets().remove(i).setAlive(false);
-					au_boom.play();
-					continue;
-				}
+				au_boom.play();
+				continue;
+			}
 			//}
 		}
 
@@ -256,7 +260,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		sr.begin(ShapeRenderer.ShapeType.Filled);
 
 //		if (player.isAlive())
-			player.drawDebug(sr);
+		player.drawDebug(sr);
 		lvlManager.drawShapes(sr);
 		sr.end();
 		batch.begin();
@@ -265,7 +269,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 			player.draw(batch);
 		}
 		lvlManager.draw(batch);
-		if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2 & Gdx.input.getY() > Gdx.graphics.getHeight() / 2) {	//TODO рисование джойстика на экране
+		if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2 & Gdx.input.getY() > Gdx.graphics.getHeight() / 2) {    //TODO рисование джойстика на экране
 		} else if (Gdx.input.isTouched() & InputProcessor.onAr) {
 			back_x = scaleWidth(InputProcessor.arrowX) - (touchpad_background.getWidth() / 2);
 			back_y = scaleHeight(Gdx.graphics.getHeight() - InputProcessor.arrowY) - (touchpad_background.getHeight() / 2);

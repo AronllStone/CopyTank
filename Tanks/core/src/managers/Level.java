@@ -254,17 +254,12 @@ public class Level {
 			if (spawnLocationChance < (i * spawnOpportunity)) {
 				enemies.add(new Enemy(spriteSheet, new Vector2(spawnLocations.get(i - 1).x, spawnLocations.get(i - 1).y), 8, 8, 8, 1, ScreenGame, enemyId));
 				boolean find = false;
-				System.out.println(enemyId);
-//				for (int j = 0; j < enemies.size(); j++) {
-//				if (resolveEnemyOnEnemyCollisions(enemies.get(j).getCollisionRect(), enemyId)
 				if (resolveEnemyOnEnemyCollisions(enemies.get(enemies.size() - 1).getCollisionRect(), enemyId)
-					||(resolveEnemyOnPlayerCollisions(enemies.get(enemies.size() - 1).getCollisionRect()))
+						|| (resolveEnemyOnPlayerCollisions(enemies.get(enemies.size() - 1).getCollisionRect()))
 						) {
 					enemies.remove(enemies.size() - 1);
 					find = true;
-//					break;
 				}
-//				}
 				if (find)
 					continue;
 				else
@@ -305,6 +300,31 @@ public class Level {
 	public boolean resolveEnemyOnPlayerCollisions(Rectangle r) {
 		if (r.overlaps(GameScreen.player.getCollisionRect()))
 			return true;
+		return false;
+	}
+
+	public boolean resolveBulletCollisions(Rectangle r) {
+		for (int i = 0; i < GameScreen.player.getBullets().size(); i++) {
+			if (r.overlaps(GameScreen.player.getBullets().get(i).getCollisionRect())) {
+				GameScreen.player.getBullets().get(i).setAlive(false);
+				GameScreen.player.getBullets().remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean resolveEnemysBulletCollisions(Rectangle r, int id) {
+		for (int i = 0; i < enemies.size(); i++) {
+			if (enemies.get(i).getId() == id)
+				continue;
+			for (int j = 0; j < enemies.get(i).getBullets().size(); j++)
+				if (r.overlaps(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+					enemies.get(i).getBullets().get(j).setAlive(false);
+					enemies.get(i).getBullets().remove(j);
+					return true;
+				}
+		}
 		return false;
 	}
 
@@ -352,6 +372,12 @@ public class Level {
 					if (resolvePlayerCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
 						enemies.get(i).getBullets().get(j).setAlive(false);
 					}
+					if (resolveBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+						enemies.get(i).getBullets().get(j).setAlive(false);
+					}
+					if (resolveEnemysBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect(), enemies.get(i).getId())) {
+						enemies.get(i).getBullets().get(j).setAlive(false);
+					}
 				}
 
 				enemies.get(i).update(dt);
@@ -370,6 +396,12 @@ public class Level {
 							enemies.get(i).getBullets().get(j).setAlive(false);
 						}
 						if (resolvePlayerCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+							enemies.get(i).getBullets().get(j).setAlive(false);
+						}
+						if (resolveBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+							enemies.get(i).getBullets().get(j).setAlive(false);
+						}
+						if (resolveEnemysBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect(), enemies.get(i).getId())) {
 							enemies.get(i).getBullets().get(j).setAlive(false);
 						}
 					}

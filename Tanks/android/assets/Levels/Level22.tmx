@@ -32,17 +32,17 @@
  </tileset>
  <layer name="Interactable" width="40" height="22">
   <data encoding="base64" compression="zlib">
-   eJzNlEsOgCAMRFFWivc/r5BgQhpkSls+k3RhhOFppzhXV8hloeBs/UpPSy+tXwD1yefala/G6EmN4NOo9S2780n213yeSfXHRDNCc7KSb4VQz1p8PbOK9lnw0b5K+Lg8q4Tym2TNiDLcWrOyduFDOaTZnS0OH1qL3o3ips+aWa/NVuseseLjenD6pOGTiOvB6UM5B5LsaHI3415P/kesU3DWLL4r1t15FvrnL6vFDpc=
+   eJzNlEsOgCAMRFFWivc/r5BgQprCQKmUSWalDE/7cY5XyNZQcLp5ZaZm1mxeAP7ks3fl4xg98R98M2p9y+58kvNczrPINSbaI7RPLPkshGrW4huZVXROg4/WVcLXy2Ml1L9J2oyoh1vvWHoXvpqsZx8JzRt9ProHNPhqvJJZ52artUe0+Hoz0D6b5ZOoN6OnDuUOl/TOTN+tmMOUf0SfgrtW8V3R9+Bd6J+/GncOCg==
   </data>
  </layer>
  <layer name="Foreground" width="40" height="22">
   <data encoding="base64" compression="zlib">
-   eJzt1DEKAEAIA0EL//9mWzvLbCQD9stBrio+63VEfZyaUx8RvU+B/h6kvmt/6k3S+yIc0bdC7KP/NfQ+RwPlOQEV
+   eJzt0zEKAAAIw0AH//9m126CS6N44B4KRrzLUo4om3Pb1EdE73Og70Hq6/7P/ZP0vuvoG3/fDLFJEfuITYret1EBYKcBdQ==
   </data>
  </layer>
  <layer name="Meta" width="40" height="22">
   <data encoding="base64" compression="zlib">
-   eJzdlEsKwCAMRN3Yrur9j1sECyWkmZjEDx3IoqjDq5mYEq/cKkI52f0O4Cnt6fWifJIvt5ZBPSqttPLcn4WPYyykRvB5JP3L7nyW85zPNam+mGhGaE5W8q0Q6pnE1zOr6FwEH+2rhU/Ls0oov1XRjCjD0p6VtQsfyiHN7mxp+NBetDaKm357Zp2bLekdieLTemj65OGzSOuh6cN7DizZ8eRuxrte/c9Wf+JDd34DngMMKg==
+   eJzdlMEKwCAMQ724neb/f+4QHIxSm1o7KwvkpIantk2JV272UE72vANkSntGsyiflMutZeBHpVmrmfez8HGMhfgLvhlJd9mdz3Key7kWucdEa4TWSSRfhNCfSXwjvYrOefDRf7XwaXmihOq3ypsR1bC0J9K78PUU3ftIqN/o+ugc8ODr8Vp6nestaY548Wkz0Dyb5bNIm6H5h/cMt9TOTN2t6MOafzb/iQ+9+Q27jQvE
   </data>
  </layer>
 </map>

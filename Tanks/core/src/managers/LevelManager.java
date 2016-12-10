@@ -54,7 +54,7 @@ public class LevelManager {
 
 	public void update(float dt) {
 
-		if (levels.get(currentLevel).getNumEnemiesOnScreen() < 5 && levels.get(currentLevel).getEnemiesLeft() > 0 ) { //TODO количиство enemy на экране
+		if (levels.get(currentLevel).getNumEnemiesOnScreen() < 2 && levels.get(currentLevel).getEnemiesLeft() > 0 ) { //TODO количиство enemy на экране
 			levels.get(currentLevel).spawnEnemy();
 		}
 
