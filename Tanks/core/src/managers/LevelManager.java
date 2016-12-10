@@ -57,7 +57,6 @@ public class LevelManager {
 		if (levels.get(currentLevel).getNumEnemiesOnScreen() < 2 && levels.get(currentLevel).getEnemiesLeft() > 0 ) { //TODO количиство enemy на экране
 			levels.get(currentLevel).spawnEnemy();
 		}
-
 		levels.get(currentLevel).update(dt);
 	}
 
