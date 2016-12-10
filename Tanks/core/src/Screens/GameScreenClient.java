@@ -306,38 +306,38 @@ public class GameScreenClient extends ApplicationAdapter implements Screen {
 		//System.out.println("Player " + player.isAlive());
 		if (player.isAlive())
 			for (int i = 0; i < player.getBullets().size(); i++) {
-				if (lvlManager.getCurrentLevel().resloveDestructible(player.getBullets().get(i).getCollisionRect())) {
+				if (lvlManager.getCurrentLevel().resolveDestructible(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
 					continue;
 				}
-				if (lvlManager.getCurrentLevel().resloveUnDestructible(player.getBullets().get(i).getCollisionRect())) {
+				if (lvlManager.getCurrentLevel().resolveUnDestructible(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
 					continue;
 				}
-				if (lvlManager.getCurrentLevel().resloveBase(player.getBullets().get(i).getCollisionRect())) {
+				if (lvlManager.getCurrentLevel().resolveBase(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
 					continue;
 				}
-				if (lvlManager.getCurrentLevel().resloveEnemyCollisions(player.getBullets().get(i).getCollisionRect())) {
+				if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
 					continue;
 				}
 			}
 		if (player2.isAlive())
 			for (int i = 0; i < player2.getBullets().size(); i++) {
-				if (lvlManager.getCurrentLevel().resloveDestructible(player2.getBullets().get(i).getCollisionRect())) {
+				if (lvlManager.getCurrentLevel().resolveDestructible(player2.getBullets().get(i).getCollisionRect())) {
 					player2.getBullets().get(i).setAlive(false);
 					continue;
 				}
-				if (lvlManager.getCurrentLevel().resloveUnDestructible(player2.getBullets().get(i).getCollisionRect())) {
+				if (lvlManager.getCurrentLevel().resolveUnDestructible(player2.getBullets().get(i).getCollisionRect())) {
 					player2.getBullets().get(i).setAlive(false);
 					continue;
 				}
-				if (lvlManager.getCurrentLevel().resloveBase(player2.getBullets().get(i).getCollisionRect())) {
+				if (lvlManager.getCurrentLevel().resolveBase(player2.getBullets().get(i).getCollisionRect())) {
 					player2.getBullets().get(i).setAlive(false);
 					continue;
 				}
-				if (lvlManager.getCurrentLevel().resloveEnemyCollisions(player2.getBullets().get(i).getCollisionRect())) {
+				if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player2.getBullets().get(i).getCollisionRect())) {
 					player2.getBullets().get(i).setAlive(false);
 					continue;
 				}

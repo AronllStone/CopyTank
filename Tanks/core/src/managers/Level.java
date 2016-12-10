@@ -1,5 +1,6 @@
 package managers;
 
+import Screens.GameScreen;
 import Screens.GameScreenClient;
 import Screens.GameScreenServer;
 import actors.Enemy;
@@ -14,7 +15,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import Screens.GameScreen;
 
 import java.util.ArrayList;
 
@@ -36,7 +36,7 @@ public class Level {
 	private ArrayList<Rectangle> collisionRects;
 	private ArrayList<Rectangle> destructibleRects;
 	private ArrayList<Rectangle> undestructibleRects;
-	private ArrayList<Rectangle> baseRect;
+	public ArrayList<Rectangle> baseRect;
 	private ArrayList<Rectangle> spawnLocations;
 
 	private TiledMapTileLayer destructibleLayer;
@@ -47,8 +47,8 @@ public class Level {
 	private int enemiesLeft;
 	private int enemiesDown;
 
-	private ArrayList<Enemy> enemies;
-	private ArrayList<Player> players;
+	public ArrayList<Enemy> enemies;
+	public ArrayList<Player> players;
 
 	private int spawnTimerCoolDown;
 	private int spawnRate;
@@ -91,7 +91,7 @@ public class Level {
 	public void init() {
 		spawnTimerCoolDown = spawnRate + 1;
 		enemiesLeft = totalEnemies;
-		//TODO: set player position here
+		//TODO: set player position here (не сделано. Позиция игрока, как и его обработка и инициализация реализованны  в GameScreen)
 	}
 
 	public int getEnemiesLeft() {
@@ -168,7 +168,7 @@ public class Level {
 		return false;
 	}
 
-	public boolean resloveDestructible(Rectangle rect) {
+	public boolean resolveDestructible(Rectangle rect) {
 		int destroyed = 0;
 		for (int i = 0; i < destructibleRects.size(); i++) {
 			if (rect.overlaps(destructibleRects.get(i))) {
@@ -185,7 +185,7 @@ public class Level {
 		return false;
 	}
 
-	public boolean resloveUnDestructible(Rectangle rect) {
+	public boolean resolveUnDestructible(Rectangle rect) {
 		int shot = 0;
 		for (int i = 0; i < undestructibleRects.size(); i++) {
 			if (rect.overlaps(undestructibleRects.get(i))) {
@@ -200,7 +200,7 @@ public class Level {
 		return false;
 	}
 
-	public boolean resloveBase(Rectangle rect) {
+	public boolean resolveBase(Rectangle rect) {
 
 		int destroyed = 0;
 
@@ -234,7 +234,7 @@ public class Level {
 		spawnTimerCoolDown = 0;
 		enemiesLeft--;
 
-		double spawnLocationChance = Math.random(); //TODO enemyes только для одиночной
+		double spawnLocationChance = Math.random(); //TODO enemies только для одиночной
 //		double spawnLocationChance = 0.1;
 //		if (ScreenGame == 1) {
 //			spawnLocationChance = GameScreen.random.nextDouble();
@@ -249,27 +249,32 @@ public class Level {
 
 		for (int i = 1; i <= spawnLocations.size(); i++) {
 			if (spawnLocationChance < (i * spawnOpportunity)) {
-				enemies.add(new Enemy(spriteSheet, new Vector2(spawnLocations.get(i - 1).x,
-						spawnLocations.get(i - 1).y), 8, 8, 8, 1, ScreenGame));
-				break;
+				enemies.add(new Enemy(spriteSheet, new Vector2(spawnLocations.get(i - 1).x, spawnLocations.get(i - 1).y), 8, 8, 8, 1, ScreenGame, enemies.size()));
+				if (resolveEnemyOnEnemyCollisions(enemies.get(enemies.size() - 1).getCollisionRect(), enemies.size() - 1) || (resolveEnemyOnPlayerCollisions(enemies.get(enemies.size() - 1).getCollisionRect()))) {
+					enemies.remove(enemies.size() - 1);
+					continue;
+				} else
+					break;
 			}
 		}
 	}
 
-	public boolean resloveEnemyCollisions(Rectangle r) {
+	public boolean resolveEnemyCollisions(Rectangle r) {
 		for (int i = 0; i < enemies.size(); i++) {
 			if (enemies.get(i).getCollisionRect().overlaps(r)) {
 				System.out.println("enemy");
 				enemiesDown++;
 				enemies.get(i).setAlive(false);
+				for (int j = i; j < enemies.size(); j++)
+					enemies.get(j).setId(j - 1);
 				return true;
 			}
 		}
 
 		return false;
-	}
+	}    //TODO Уничтожение ботов с плюхи от игрока
 
-	public boolean reslovePlayerCollisions(Rectangle r) {
+	public boolean resolvePlayerCollisions(Rectangle r) {
 		for (int i = 0; i < players.size(); i++) {
 			if (players.get(i).getCollisionRect().overlaps(r)) {
 				System.out.println("qweqwe");
@@ -279,38 +284,61 @@ public class Level {
 		}
 
 		return false;
+	}    //TODO Должно быть уничтожение игрока с плюхи бота, но не реализованно (нигде не вызывается)
+
+	public boolean resolveEnemyOnPlayerCollisions(Rectangle r) {
+		if (r.overlaps(GameScreen.player.getCollisionRect()))
+			return true;
+		return false;
 	}
+
+	public boolean resolvePlayerOnEnemyCollisions(Rectangle r) {
+		for (int i = 0; i < enemies.size(); i++) {
+			if (r.overlaps(enemies.get(i).getCollisionRect())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean resolveEnemyOnEnemyCollisions(Rectangle r, int j) {
+		for (int i = 0; i < enemies.size(); i++) {
+			if (i == j)
+				continue;
+			if (r.overlaps(enemies.get(i).getCollisionRect())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	public void update(float dt) {
 		spawnTimerCoolDown++;
 
 		for (int i = 0; i < enemies.size(); i++) {
 			if (enemies.get(i).isAlive()) {
-				if (resolveCollisions(enemies.get(i).getCollisionRect())) {
+
+				if (resolveCollisions(enemies.get(i).getCollisionRect()) || resolveEnemyOnPlayerCollisions(enemies.get(i).getCollisionRect()) || resolveEnemyOnEnemyCollisions(enemies.get(i).getCollisionRect(), i)) {
 					enemies.get(i).setVelocity(Enemy.STOPPED);
 				}
 
 				for (int j = 0; j < enemies.get(i).getBullets().size(); j++) {
-					if (resloveDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+					if (resolveDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
 						enemies.get(i).getBullets().get(j).setAlive(false);
 					}
-					if (resloveBase(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+					if (resolveBase(enemies.get(i).getBullets().get(j).getCollisionRect())) {
 						enemies.get(i).getBullets().get(j).setAlive(false);
 					}
-					if (reslovePlayerCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+					if (resolvePlayerCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
 						enemies.get(i).getBullets().get(j).setAlive(false);
 					}
 
 				}
-
 				enemies.get(i).update(dt);
 			} else {
 				enemies.remove(i);
 			}
-			/*for(int i = 0; i<players.size(); i++)
-			{
-				if(!players.get(i).isAlive())
-			}*/
 		}
 	}
 
@@ -318,9 +346,9 @@ public class Level {
 	public void drawBackground() {
 		if (ScreenGame == 1)
 			renderer.setView(GameScreen.camera);
-		if (ScreenGame == 2)
+		else if (ScreenGame == 2)
 			renderer.setView(GameScreenServer.camera);
-		if (ScreenGame == 3)
+		else if (ScreenGame == 3)
 			renderer.setView(GameScreenClient.camera);
 		renderer.render(bLayers);
 	}
@@ -340,10 +368,24 @@ public class Level {
 	public void drawForeground() {
 		if (ScreenGame == 1)
 			renderer.setView(GameScreen.camera);
-		if (ScreenGame == 2)
+		else if (ScreenGame == 2)
 			renderer.setView(GameScreenServer.camera);
-		if (ScreenGame == 3)
+		else if (ScreenGame == 3)
 			renderer.setView(GameScreenClient.camera);
 		renderer.render(fLayers);
 	}
+
+	public Rectangle get0Base() {
+		return (baseIsAlive) ? baseRect.get(0) : null;
+	}
+
+	public Rectangle get1Base() {
+		return (baseIsAlive) ? baseRect.get(1) : null;
+	}
+
+	public Rectangle get2Base() {
+		return (baseIsAlive) ? baseRect.get(2) : null;
+	}
+
+
 }
