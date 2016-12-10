@@ -55,6 +55,8 @@ public class Level {
 	private int ScreenGame;
 	boolean baseIsAlive;
 
+	private int enemyId;
+
 
 	public Level(String mapName, Texture spriteSheet, int totalEnemies, int spawnRate, int ScreenGame) {
 		/*Create the Map*/
@@ -82,6 +84,8 @@ public class Level {
 		players = new ArrayList<Player>();
 
 		this.spawnRate = spawnRate;
+
+		enemyId = 0;
 
 		init();
 
@@ -232,7 +236,6 @@ public class Level {
 			return;
 
 		spawnTimerCoolDown = 0;
-		enemiesLeft--;
 
 		double spawnLocationChance = Math.random(); //TODO enemies только для одиночной
 //		double spawnLocationChance = 0.1;
@@ -249,26 +252,39 @@ public class Level {
 
 		for (int i = 1; i <= spawnLocations.size(); i++) {
 			if (spawnLocationChance < (i * spawnOpportunity)) {
-				enemies.add(new Enemy(spriteSheet, new Vector2(spawnLocations.get(i - 1).x, spawnLocations.get(i - 1).y), 8, 8, 8, 1, ScreenGame, enemies.size()));
-				if (resolveEnemyOnEnemyCollisions(enemies.get(enemies.size() - 1).getCollisionRect(), enemies.size() - 1) || (resolveEnemyOnPlayerCollisions(enemies.get(enemies.size() - 1).getCollisionRect()))) {
+				enemies.add(new Enemy(spriteSheet, new Vector2(spawnLocations.get(i - 1).x, spawnLocations.get(i - 1).y), 8, 8, 8, 1, ScreenGame, enemyId));
+				boolean find = false;
+				System.out.println(enemyId);
+//				for (int j = 0; j < enemies.size(); j++) {
+//				if (resolveEnemyOnEnemyCollisions(enemies.get(j).getCollisionRect(), enemyId)
+				if (resolveEnemyOnEnemyCollisions(enemies.get(enemies.size() - 1).getCollisionRect(), enemyId)
+					||(resolveEnemyOnPlayerCollisions(enemies.get(enemies.size() - 1).getCollisionRect()))
+						) {
 					enemies.remove(enemies.size() - 1);
+					find = true;
+//					break;
+				}
+//				}
+				if (find)
 					continue;
-				} else
+				else
 					break;
 			}
 		}
+		enemyId++;
+		enemiesLeft--;
 	}
 
 	public boolean resolveEnemyCollisions(Rectangle r) {
 		for (int i = 0; i < enemies.size(); i++) {
-			if (enemies.get(i).getCollisionRect().overlaps(r)) {
-				System.out.println("enemy");
-				enemiesDown++;
-				enemies.get(i).setAlive(false);
-				for (int j = i; j < enemies.size(); j++)
-					enemies.get(j).setId(j - 1);
-				return true;
-			}
+			if (enemies.get(i).draw)
+				if (enemies.get(i).getCollisionRect().overlaps(r)) {
+					System.out.println("enemy " + i);
+					enemiesDown++;
+					enemies.get(i).setAlive(false);
+
+					return true;
+				}
 		}
 
 		return false;
@@ -303,7 +319,7 @@ public class Level {
 
 	public boolean resolveEnemyOnEnemyCollisions(Rectangle r, int j) {
 		for (int i = 0; i < enemies.size(); i++) {
-			if (i == j)
+			if (enemies.get(i).getId() == j)
 				continue;
 			if (r.overlaps(enemies.get(i).getCollisionRect())) {
 				return true;
@@ -319,12 +335,15 @@ public class Level {
 		for (int i = 0; i < enemies.size(); i++) {
 			if (enemies.get(i).isAlive()) {
 
-				if (resolveCollisions(enemies.get(i).getCollisionRect()) || resolveEnemyOnPlayerCollisions(enemies.get(i).getCollisionRect()) || resolveEnemyOnEnemyCollisions(enemies.get(i).getCollisionRect(), i)) {
+				if (resolveCollisions(enemies.get(i).getCollisionRect()) || resolveEnemyOnPlayerCollisions(enemies.get(i).getCollisionRect()) || resolveEnemyOnEnemyCollisions(enemies.get(i).getCollisionRect(), enemies.get(i).getId())) {
 					enemies.get(i).setVelocity(Enemy.STOPPED);
 				}
 
 				for (int j = 0; j < enemies.get(i).getBullets().size(); j++) {
 					if (resolveDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+						enemies.get(i).getBullets().get(j).setAlive(false);
+					}
+					if (resolvePlayerOnEnemyCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
 						enemies.get(i).getBullets().get(j).setAlive(false);
 					}
 					if (resolveBase(enemies.get(i).getBullets().get(j).getCollisionRect())) {
@@ -333,11 +352,30 @@ public class Level {
 					if (resolvePlayerCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
 						enemies.get(i).getBullets().get(j).setAlive(false);
 					}
-
 				}
+
 				enemies.get(i).update(dt);
 			} else {
-				enemies.remove(i);
+				if (enemies.get(i).getBullets().size() == 0) {
+					enemies.remove(i);
+				} else {
+					for (int j = 0; j < enemies.get(i).getBullets().size(); j++) {
+						if (resolveDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+							enemies.get(i).getBullets().get(j).setAlive(false);
+						}
+						if (resolvePlayerOnEnemyCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+							enemies.get(i).getBullets().get(j).setAlive(false);
+						}
+						if (resolveBase(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+							enemies.get(i).getBullets().get(j).setAlive(false);
+						}
+						if (resolvePlayerCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+							enemies.get(i).getBullets().get(j).setAlive(false);
+						}
+					}
+					enemies.get(i).draw = false;
+					enemies.get(i).update(dt);
+				}
 			}
 		}
 	}
@@ -355,7 +393,8 @@ public class Level {
 
 	public void draw(SpriteBatch batch) {
 		for (Enemy e : enemies) {
-			e.draw(batch);
+			if (e.draw)
+				e.draw(batch);
 		}
 	}
 

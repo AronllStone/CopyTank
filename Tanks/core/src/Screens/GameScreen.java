@@ -131,7 +131,6 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
 	public void render(float a) {
 
-		//random.setSeed(irand++);
 		/* Clear the screen */
 		livesTimer++;
 		if (!player.isAlive() & Lives > 1 & livesTimer > 100) {
@@ -190,9 +189,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				movedBuf = moved;
 			}
 
-			/*if(GameKeys.isDown(GameKeys.GET_POS))
-				System.out.println("POSSITION PLAYER = " + player.getPosition()); //TODO GET POSITION OF PLAYER
-*/
+//				System.out.println("POSSITION PLAYER = " + player.getPosition()); //TODO GET POSITION OF PLAYER
 			if (lvlManager.getCurrentLevel().resolveCollisions(player.getCollisionRect()) || lvlManager.getCurrentLevel().resolvePlayerOnEnemyCollisions(player.getCollisionRect())) {
 				player.setVelocity(Player.STOPPED);
 			}
@@ -220,7 +217,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		}
 		//if (player.isAlive()) {
 			player.update(Gdx.graphics.getDeltaTime());
-			for (int i = 0; i < player.getBullets().size(); i++) {
+			for (int i = 0; i < player.getBullets().size(); i++) {	//TODO обработка пуль для игрока
 				if (lvlManager.getCurrentLevel().resolveDestructible(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
 					au_tick.play();
@@ -239,6 +236,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				}
 				if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
+//					player.getBullets().remove(i).setAlive(false);
 					au_boom.play();
 					continue;
 				}
@@ -267,7 +265,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 			player.draw(batch);
 		}
 		lvlManager.draw(batch);
-		if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2 & Gdx.input.getY() > Gdx.graphics.getHeight() / 2) {
+		if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2 & Gdx.input.getY() > Gdx.graphics.getHeight() / 2) {	//TODO рисование джойстика на экране
 		} else if (Gdx.input.isTouched() & InputProcessor.onAr) {
 			back_x = scaleWidth(InputProcessor.arrowX) - (touchpad_background.getWidth() / 2);
 			back_y = scaleHeight(Gdx.graphics.getHeight() - InputProcessor.arrowY) - (touchpad_background.getHeight() / 2);

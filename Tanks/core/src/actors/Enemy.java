@@ -18,6 +18,7 @@ public class Enemy extends GameObject {
 	public int screengas;
 	public int shootcount;
 	public int id;
+	public boolean draw;
 
 
 	public Enemy(Texture spriteSheet, Vector2 position, int spriteSheetRows,
@@ -30,6 +31,7 @@ public class Enemy extends GameObject {
 		alive = true;
 		shootcount = 0;
 		this.id = id;
+		draw = true;
 
 		randomMovement();
 	}
@@ -115,24 +117,25 @@ public class Enemy extends GameObject {
 	@Override
 	public void update(float dt) {
 
-		Level level = GameScreen.lvlManager.getCurrentLevel();
-		double mathRand = 0;
-		shootcount++;
+		if (draw) {
+			Level level = GameScreen.lvlManager.getCurrentLevel();
+			double mathRand = 0;
+			shootcount++;
 
-		if (screengas == 1)
-			mathRand = GameScreen.random.nextDouble();
-		else if (screengas == 2)
-			mathRand = GameScreenServer.random.nextDouble();
-		else if (screengas == 3)
-			mathRand = GameScreenClient.random.nextDouble();
+			if (screengas == 1)
+				mathRand = GameScreen.random.nextDouble();
+			else if (screengas == 2)
+				mathRand = GameScreenServer.random.nextDouble();
+			else if (screengas == 3)
+				mathRand = GameScreenClient.random.nextDouble();
 
 
-		if ((super.previousX - getPosition().x == 0) && (super.previousY - getPosition().y == 0)) {
-			randomMovement();
-		}
+			if ((super.previousX - getPosition().x == 0) && (super.previousY - getPosition().y == 0)) {
+				randomMovement();
+			}
 
-		float EnemyOnLinePlayerX = GameScreen.player.getPosition().x - getPosition().x;
-		float EnemyOnLinePlayerY = GameScreen.player.getPosition().y - getPosition().y;
+			float EnemyOnLinePlayerX = GameScreen.player.getPosition().x - getPosition().x;
+			float EnemyOnLinePlayerY = GameScreen.player.getPosition().y - getPosition().y;
 /*
 		float EnemyAverageX = getPosition().x + 4;
 		float EnemyAverageY = getPosition().y + 4;	//TODO переменные для охоты на базу
@@ -154,9 +157,8 @@ public class Enemy extends GameObject {
 
 //		if ((mathRand < .01) && (GameScreen.player.getPosition().x - getPosition().x == 0 || GameScreen.player.getPosition().y - getPosition().y == 0)) {
 //		if ((EnemyOnLinePlayerX == 0 || EnemyOnLinePlayerY == 0) || (Base0X < EnemyAverageX & Base2X > EnemyAverageX) || (Base1Y > EnemyAverageY)) {	//TODO проверка на прямую наводку на базу, а так же на игрока
-		if ((EnemyOnLinePlayerX == 0 || EnemyOnLinePlayerY == 0)) {
-			turnEnemyOnPlayer(EnemyOnLinePlayerX, EnemyOnLinePlayerY);
-
+			if ((EnemyOnLinePlayerX == 0 || EnemyOnLinePlayerY == 0)) {
+				turnEnemyOnPlayer(EnemyOnLinePlayerX, EnemyOnLinePlayerY);
 
 			/*if (Base0X < EnemyAverageX & Base2X > EnemyAverageX) {	//TODO боты начинают охоту на базу
 				setVelocity(DOWN);
@@ -168,19 +170,20 @@ public class Enemy extends GameObject {
 					setVelocity(RIGHT);
 			}
 */
-			if (shootcount > 30) {
-				shoot(Bullet.BULLET_ENEMY);
-				shootcount = 0;
+				if (shootcount > 30) {
+					shoot(Bullet.BULLET_ENEMY);
+					shootcount = 0;
+				}
 			}
-		}
-		if (mathRand < .01) {
-			if (shootcount > 30) {
-				shoot(Bullet.BULLET_ENEMY);
-				shootcount = 0;
+			if (mathRand < .01) {
+				if (shootcount > 30) {
+					shoot(Bullet.BULLET_ENEMY);
+					shootcount = 0;
+				}
 			}
-		}
-		if (level.resolveCollisions(getCollisionRect()) || level.resolveEnemyOnPlayerCollisions(getCollisionRect()) || level.resolveEnemyOnEnemyCollisions(getCollisionRect(), id)) {
-			setVelocity(STOPPED);
+			if (level.resolveCollisions(getCollisionRect()) || level.resolveEnemyOnPlayerCollisions(getCollisionRect()) || level.resolveEnemyOnEnemyCollisions(getCollisionRect(), id)) {
+				setVelocity(STOPPED);
+			}
 		}
 		super.update(dt);
 	}
