@@ -19,6 +19,7 @@ public class Enemy extends GameObject {
 	public int shootcount;
 	public int id;
 	public boolean draw;
+	public boolean seePlayer = false;
 
 
 	public Enemy(Texture spriteSheet, Vector2 position, int spriteSheetRows,
@@ -32,6 +33,7 @@ public class Enemy extends GameObject {
 		shootcount = 0;
 		this.id = id;
 		draw = true;
+
 
 		randomMovement();
 	}
@@ -175,6 +177,7 @@ public class Enemy extends GameObject {
 					shootcount = 0;
 				}
 			}
+
 			if (mathRand < .01) {
 				if (shootcount > 30) {
 					shoot(Bullet.BULLET_ENEMY);

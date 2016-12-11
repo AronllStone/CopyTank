@@ -69,6 +69,11 @@ public class Bullet {
 
 	}
 
+	public Vector2 getPosition()
+	{
+		return position;
+	}
+
 	public void draw(ShapeRenderer sr) {
 		if (screengam == 1)
 			sr.circle(position.x / GameScreen.kX, position.y / GameScreen.kY, RADIUS);

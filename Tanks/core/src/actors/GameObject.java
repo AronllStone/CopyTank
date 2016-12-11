@@ -217,12 +217,12 @@ abstract class GameObject {
 
 		// Update Bullet Array
 		for (int i = 0; i < bullets.size(); i++) {
-			if (lvlManager.getCurrentLevel().resolveDestructible(bullets.get(i).getCollisionRect())) {
+
+			if (lvlManager.getCurrentLevel().resolveUnDestructible(bullets.get(i).getCollisionRect())) {
 				bullets.get(i).setAlive(false);
 				continue;
 			}
-
-			if (lvlManager.getCurrentLevel().resolveUnDestructible(bullets.get(i).getCollisionRect())) {
+			if (lvlManager.getCurrentLevel().resolveDestructible(bullets.get(i).getCollisionRect())) {
 				bullets.get(i).setAlive(false);
 				continue;
 			}
@@ -236,9 +236,9 @@ abstract class GameObject {
 				continue;
 			}
 
-			if (!bullets.get(i).getAlive())
+			if (!bullets.get(i).getAlive()) {
 				bullets.remove(i);
-			else {
+			} else {
 				bullets.get(i).update(dt);
 			}
 		}

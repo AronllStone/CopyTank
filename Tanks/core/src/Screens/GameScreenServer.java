@@ -292,10 +292,10 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 					player.getBullets().get(i).setAlive(false);
 					continue;
 				}
-				if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect())) {
+				/*if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect())) {
 					player.getBullets().get(i).setAlive(false);
 					continue;
-				}
+				}*/
 			}
 		if (player2.isAlive())
 			for (int i = 0; i < player2.getBullets().size(); i++) {
@@ -311,10 +311,10 @@ public class GameScreenServer extends ApplicationAdapter implements Screen {
 					player2.getBullets().get(i).setAlive(false);
 					continue;
 				}
-				if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player2.getBullets().get(i).getCollisionRect())) {
+				/*if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player2.getBullets().get(i).getCollisionRect())) {
 					player2.getBullets().get(i).setAlive(false);
 					continue;
-				}
+				}*/
 			}
 
 		lvlManager.update(Gdx.graphics.getDeltaTime());

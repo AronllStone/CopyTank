@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.ArrayMap;
 
 import java.util.ArrayList;
 
@@ -45,7 +46,7 @@ public class Level {
 	private TiledMapTileLayer baseLayer;
 	private int totalEnemies;
 	private int enemiesLeft;
-	private int enemiesDown;
+	public int enemiesDown;
 
 	public ArrayList<Enemy> enemies;
 	public ArrayList<Player> players;
@@ -183,30 +184,24 @@ public class Level {
 			}
 		}
 		if (destroyed > 0) {
-			destroyed = 0;
 			return true;
 		}
 		return false;
 	}
 
 	public boolean resolveUnDestructible(Rectangle rect) {
-		int shot = 0;
 		for (int i = 0; i < undestructibleRects.size(); i++) {
 			if (rect.overlaps(undestructibleRects.get(i))) {
-				undestructibleLayer.setCell((int) undestructibleRects.get(i).x / TILE_SIZE,
-						(int) undestructibleRects.get(i).y / TILE_SIZE, null);
-				shot = 1;
+//				undestructibleLayer.setCell((int) undestructibleRects.get(i).x / TILE_SIZE, (int) undestructibleRects.get(i).y / TILE_SIZE, null);
+				return true;
 			}
 		}
-
-		if (shot == 1)
-			return true;
 		return false;
 	}
 
 	public boolean resolveBase(Rectangle rect) {
 
-		int destroyed = 0;
+//		int destroyed = 0;
 
 		for (int i = 0; i < baseRect.size(); i++) {
 			if (rect.overlaps(baseRect.get(i))) {
@@ -215,15 +210,18 @@ public class Level {
 				baseLayer.setCell((int) baseRect.get(2).x / TILE_SIZE, (int) baseRect.get(2).y / TILE_SIZE, null);
 				baseLayer.setCell((int) baseRect.get(3).x / TILE_SIZE, (int) baseRect.get(3).y / TILE_SIZE, null);
 				baseRect.clear();
-				destroyed++;
+//				destroyed++;
 				baseIsAlive = false;
+				return true;
 			}
 		}
 
 
+/*
 		if (destroyed > 0) {
 			return true;
 		}
+*/
 		return false;
 	}
 
@@ -270,19 +268,20 @@ public class Level {
 		enemiesLeft--;
 	}
 
-	public boolean resolveEnemyCollisions(Rectangle r) {
+	public ArrayMap<Boolean, Vector2> resolveEnemyCollisions(Rectangle r) {
+		ArrayMap<Boolean, Vector2> lol = new ArrayMap<Boolean, Vector2>();
 		for (int i = 0; i < enemies.size(); i++) {
 			if (enemies.get(i).draw)
 				if (enemies.get(i).getCollisionRect().overlaps(r)) {
 					System.out.println("enemy " + i);
 					enemiesDown++;
 					enemies.get(i).setAlive(false);
-
-					return true;
+					lol.put(true,enemies.get(i).getPosition());
+					return lol;
 				}
 		}
 
-		return false;
+		return null;
 	}    //TODO Уничтожение ботов с плюхи от игрока
 
 	public boolean resolvePlayerCollisions(Rectangle r) {
@@ -348,17 +347,17 @@ public class Level {
 		return false;
 	}
 
-
 	public void update(float dt) {
 		spawnTimerCoolDown++;
 
 		for (int i = 0; i < enemies.size(); i++) {
 			if (enemies.get(i).isAlive()) {
 
-				if (resolveCollisions(enemies.get(i).getCollisionRect()) || resolveEnemyOnPlayerCollisions(enemies.get(i).getCollisionRect()) || resolveEnemyOnEnemyCollisions(enemies.get(i).getCollisionRect(), enemies.get(i).getId())) {
+				if (resolveCollisions(enemies.get(i).getCollisionRect()) ||
+						resolveEnemyOnPlayerCollisions(enemies.get(i).getCollisionRect()) ||
+						resolveEnemyOnEnemyCollisions(enemies.get(i).getCollisionRect(), enemies.get(i).getId())) {
 					enemies.get(i).setVelocity(Enemy.STOPPED);
 				}
-
 				for (int j = 0; j < enemies.get(i).getBullets().size(); j++) {
 					if (resolveDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
 						enemies.get(i).getBullets().get(j).setAlive(false);
@@ -378,10 +377,16 @@ public class Level {
 					if (resolveEnemysBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect(), enemies.get(i).getId())) {
 						enemies.get(i).getBullets().get(j).setAlive(false);
 					}
-				}
+					if (resolveUnDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+						enemies.get(i).getBullets().get(j).setAlive(false);
+						enemies.get(i).getBullets().remove(j);
+						j--;
+					}
 
+				}
 				enemies.get(i).update(dt);
 			} else {
+				System.out.println(enemies.get(i).getBullets().size());
 				if (enemies.get(i).getBullets().size() == 0) {
 					enemies.remove(i);
 				} else {
@@ -403,6 +408,11 @@ public class Level {
 						}
 						if (resolveEnemysBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect(), enemies.get(i).getId())) {
 							enemies.get(i).getBullets().get(j).setAlive(false);
+						}
+						if (resolveUnDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+							enemies.get(i).getBullets().get(j).setAlive(false);
+							enemies.get(i).getBullets().remove(j);
+							j--;
 						}
 					}
 					enemies.get(i).draw = false;

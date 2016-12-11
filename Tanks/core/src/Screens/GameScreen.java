@@ -4,6 +4,7 @@ import actors.Bullet;
 import actors.Player;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.ArrayMap;
 import main.Main;
 import managers.GameKeys;
 import managers.InputProcessor;
@@ -36,6 +38,15 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	Texture spriteSheet;
 	public static Texture touchpad_background;
 	public static Texture touchpad_knob;
+	public static Texture tx_boom1;
+	public static Texture tx_boom2;
+	public static Texture tx_boom3;
+
+	float playerBoomX = 0;
+	float playerBoomY = 0;
+
+	public static int boomScaleX;
+	public static int boomScaleY;
 
 	public static Sound au_shoot;
 	public static Sound au_boom;
@@ -67,8 +78,11 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	String gameover;
 
 	int shootTimer;
-	int shootTimer2;
-
+	int boomTimer;
+	int boomTimer1;
+	boolean enemyBoom = false;
+	float enemyBoomX = 0;
+	float enemyBoomY = 0;
 	boolean backIs = false;
 	//	boolean preciousFire = false;
 //	boolean preciousFire2 = true;
@@ -107,6 +121,13 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		spriteSheet = new Texture(Gdx.files.internal("TanksSpriteSheet.png"));
 		touchpad_background = new Texture(Gdx.files.internal("touchpad_background.png"));
 		touchpad_knob = new Texture(Gdx.files.internal("touchpad_knob.png"));
+
+		tx_boom1 = new Texture(Gdx.files.internal("boom1.png"));
+		tx_boom2 = new Texture(Gdx.files.internal("boom2.png"));
+		tx_boom3 = new Texture(Gdx.files.internal("boom3.png"));
+
+		boomScaleX = scaleHeight(Gdx.graphics.getHeight()) - tx_boom1.getHeight() / 2;
+		boomScaleY = scaleHeight(Gdx.graphics.getWidth()) - tx_boom1.getHeight() / 2;
 
 		au_shoot = Gdx.audio.newSound(Gdx.files.internal("Shoot.wav"));
 		au_boom = Gdx.audio.newSound(Gdx.files.internal("Boom.wav"));
@@ -209,16 +230,33 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				}
 			}
 
+			if (Gdx.input.isKeyPressed(Input.Keys.P)) {
+				for (int i = 0; i < lvlManager.getCurrentLevel().getEnemiesList().size(); i++) {
+					if (!lvlManager.getCurrentLevel().getEnemiesList().get(i).draw)
+						System.out.println(i + " " + lvlManager.getCurrentLevel().getEnemiesList().get(i).draw);
+					/*if (lvlManager.getCurrentLevel().getEnemiesList().get(i).draw) {
+						lvlManager.getCurrentLevel().getEnemiesList().get(i).draw = false;
+						lvlManager.getCurrentLevel().getEnemiesList().remove(i);
+					i--;
+					lvlManager.getCurrentLevel().enemiesDown++;
+					}*/
+				}
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.U)) {
+				Lives = 10;
+			}
 			if (GameKeys.isDown(GameKeys.SPACE)) {
 				if (shootTimer > 30) {
-					if (player.getBullets().size() == 0) {
-						au_shoot.play();
-						player.shoot(Bullet.BULLET_PLAYER);
-					}
+					//if (player.getBullets().size() == 0) {
+					au_shoot.play();
+					player.shoot(Bullet.BULLET_PLAYER);
+					//}
 					shootTimer = 0;
 				}
 			}
 		}
+
+
 		//if (player.isAlive()) {
 		player.update(Gdx.graphics.getDeltaTime());
 		for (int i = 0; i < player.getBullets().size(); i++) {    //TODO обработка пуль для игрока
@@ -238,9 +276,13 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				au_tick.play();
 				continue;
 			}
-			if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect())) {
+			ArrayMap<Boolean, Vector2> lol = null;
+			if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect()) != null) {
 				player.getBullets().get(i).setAlive(false);
-//					player.getBullets().remove(i).setAlive(false);
+				lol = lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect());
+				enemyBoomX = lol.get(true).x;
+				enemyBoomY = lol.get(true).y;
+				enemyBoom = true;
 				au_boom.play();
 				continue;
 			}
@@ -260,14 +302,41 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		sr.begin(ShapeRenderer.ShapeType.Filled);
 
 //		if (player.isAlive())
-		player.drawDebug(sr);
+		player.drawDebug(sr);    //TODO отрисовка пуль игрока
 		lvlManager.drawShapes(sr);
 		sr.end();
 		batch.begin();
 
+
 		if (player.isAlive()) {
 			player.draw(batch);
+			playerBoomX = player.getPosition().x;
+			playerBoomY = player.getPosition().y;
+			boomTimer = 0;
+		} else {
+			if (boomTimer < 8)
+				batch.draw(tx_boom1, playerBoomX, playerBoomY);
+			else if (boomTimer < 16)
+				batch.draw(tx_boom2, playerBoomX, playerBoomY);
+			else if (boomTimer < 24)
+				batch.draw(tx_boom3, playerBoomX, playerBoomY);
+			boomTimer++;
 		}
+
+		if (enemyBoom) {
+			if (boomTimer1 < 8)
+				batch.draw(tx_boom1, enemyBoomX, enemyBoomY);
+			else if (boomTimer1 < 16)
+				batch.draw(tx_boom2, enemyBoomX, enemyBoomY);
+			else if (boomTimer1 < 24)
+				batch.draw(tx_boom3, enemyBoomX, enemyBoomY);
+			else
+				enemyBoom = false;
+			boomTimer1++;
+		} else {
+			boomTimer1 = 0;
+		}
+
 		lvlManager.draw(batch);
 		if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2 & Gdx.input.getY() > Gdx.graphics.getHeight() / 2) {    //TODO рисование джойстика на экране
 		} else if (Gdx.input.isTouched() & InputProcessor.onAr) {

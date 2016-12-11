@@ -32,7 +32,7 @@
  </tileset>
  <layer name="Interactable" width="40" height="22">
   <data encoding="base64" compression="zlib">
-   eJztkksOwCAIRG27ar3/fXXTpBt0+Cg0YZJZCAIvSikpC9WPRzEkJ61fdf8inHxx+CRC+bxUQe+YMZorzSNGdkf7LhqO6HxUH46o/+RqNj8iH7LP3Li2H9Uz+Xz5Zmcvvpm8+f7yv7v4uHrrj+7ToN8qvrv7MeZrNbEQ2g==
+   eJztlM0KgDAMg6eedO//vu4iiNiSuLIFaSCXLYSP/bSUVITqzW/raJ7JPPe8fA/fZjj5dPi+COWbpQr6z0LeTu+5IF0Whzqf1cPI+oes0P+uxOfNPG/uWXl2jqKdyTefj8mM5EOkcH7q9zuKj9XVsTSvwZ2RXXvzEdx5At9/DHg=
   </data>
  </layer>
  <layer name="Foreground" width="40" height="22" visible="0">
@@ -42,7 +42,7 @@
  </layer>
  <layer name="Meta" width="40" height="22">
   <data encoding="base64" compression="zlib">
-   eJztkksKwCAMRN1Yd73/cbupUISYSYaaCA7MQvN7aErJrYuMe3O1/DFWP57dITFv/V/5t+DDl4fPI5QvShX0ihmzud44YmR32HdhOLLzSX0skv7TKm1+Rj5kn633bD+p5+GL5dPOUXyaovl2+d9VfFb1+vaa7bcT3wP+owo4
+   eJztlMEKwCAMQ7243fb/n7vLhFGWLrVDwzDQiw3hUbWlaGtL9nu9b37bq7d6OrdC/ojH9jx/hu8Atfh0+HrE8s1SJevPYt5Odi5MFuJQ50M5EaF/GBX735X4vJ3n7T3kj+5RNnPxzeeLeEbyMVKYn/r9juKLqmXsV32Zqc53AnpqCDo=
   </data>
  </layer>
 </map>
