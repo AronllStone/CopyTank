@@ -273,14 +273,13 @@ public class Level {
 		for (int i = 0; i < enemies.size(); i++) {
 			if (enemies.get(i).draw)
 				if (enemies.get(i).getCollisionRect().overlaps(r)) {
-					System.out.println("enemy " + i);
-					enemiesDown++;
 					enemies.get(i).setAlive(false);
 					lol.put(true,enemies.get(i).getPosition());
+					System.out.println("enemy " + i);
+					enemiesDown++;
 					return lol;
 				}
 		}
-
 		return null;
 	}    //TODO Уничтожение ботов с плюхи от игрока
 

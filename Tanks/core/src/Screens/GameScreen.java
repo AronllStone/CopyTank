@@ -84,8 +84,6 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	float enemyBoomX = 0;
 	float enemyBoomY = 0;
 	boolean backIs = false;
-	//	boolean preciousFire = false;
-//	boolean preciousFire2 = true;
 	Main main;
 
 	public GameScreen(Main gameScreen) {
@@ -230,22 +228,10 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				}
 			}
 
-			if (Gdx.input.isKeyPressed(Input.Keys.P)) {
-				for (int i = 0; i < lvlManager.getCurrentLevel().getEnemiesList().size(); i++) {
-					if (!lvlManager.getCurrentLevel().getEnemiesList().get(i).draw)
-						System.out.println(i + " " + lvlManager.getCurrentLevel().getEnemiesList().get(i).draw);
-					/*if (lvlManager.getCurrentLevel().getEnemiesList().get(i).draw) {
-						lvlManager.getCurrentLevel().getEnemiesList().get(i).draw = false;
-						lvlManager.getCurrentLevel().getEnemiesList().remove(i);
-					i--;
-					lvlManager.getCurrentLevel().enemiesDown++;
-					}*/
-				}
-			}
 			if (Gdx.input.isKeyPressed(Input.Keys.U)) {
 				Lives = 10;
 			}
-			if (GameKeys.isDown(GameKeys.SPACE)) {
+			if (GameKeys.isDown(GameKeys.SPACE) || Gdx.input.isButtonPressed(Input.Keys.BUTTON_A)) {
 				if (shootTimer > 30) {
 					//if (player.getBullets().size() == 0) {
 					au_shoot.play();
@@ -277,9 +263,9 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 				continue;
 			}
 			ArrayMap<Boolean, Vector2> lol = null;
-			if (lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect()) != null) {
+			lol = lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect());
+			if (lol != null) {
 				player.getBullets().get(i).setAlive(false);
-				lol = lvlManager.getCurrentLevel().resolveEnemyCollisions(player.getBullets().get(i).getCollisionRect());
 				enemyBoomX = lol.get(true).x;
 				enemyBoomY = lol.get(true).y;
 				enemyBoom = true;
