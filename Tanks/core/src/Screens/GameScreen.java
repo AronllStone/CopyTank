@@ -83,7 +83,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 	boolean enemyBoom = false;
 	float enemyBoomX = 0;
 	float enemyBoomY = 0;
-	boolean backIs = false;
+	playerMove playerMove;
 	Main main;
 
 	public GameScreen(Main gameScreen) {
@@ -136,6 +136,10 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
 		lvlManager = new LevelManager(spriteSheet, 1);
 		player = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 3, 1);
+
+		playerMove = new playerMove();
+		playerMove.start();
+
 		//player2 = new Player(spriteSheet, Level.PLAYER_START_POS2, 8, 8, 8, 0, 1);
 		random = new Random();
 		irand = (int) (Math.random() * 100);
@@ -158,6 +162,9 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 			Lives--;
 			au_move.stop();
 			player = new Player(spriteSheet, new Vector2(144, 4), 8, 8, 8, 3, 1);
+			playerMove = new playerMove();
+			playerMove.start();
+
 			livesTimer = 0;
 		}
 
@@ -183,7 +190,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		//shootTimer2++;
 
 		if (player.isAlive()) {
-			if (GameKeys.isDown(GameKeys.LEFT)) {
+			/*if (GameKeys.isDown(GameKeys.LEFT)) {
 				player.setVelocity(Player.LEFT);
 				moved = true;
 			} else if (GameKeys.isDown(GameKeys.UP)) {
@@ -198,7 +205,11 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 			} else {
 				player.setVelocity(Player.STOPPED);
 				moved = false;
-			}
+			}*/
+
+			player.setVelocity(playerMove.threadMovement);
+			moved = playerMove.threadMoved;
+
 
 			if (moved != movedBuf) {
 				if (moved) {
@@ -231,7 +242,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 			if (Gdx.input.isKeyPressed(Input.Keys.U)) {
 				Lives = 10;
 			}
-			if (GameKeys.isDown(GameKeys.SPACE) || Gdx.input.isButtonPressed(Input.Keys.BUTTON_A)) {
+			if (GameKeys.isDown(GameKeys.SPACE)) {
 				if (shootTimer > 30) {
 					//if (player.getBullets().size() == 0) {
 					au_shoot.play();
@@ -350,17 +361,67 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 		lvlManager.drawLevelFor();
 
 		if (!lvlManager.getCurrentLevel().baseIsAlive()) {
+			for (int i = 0; i < lvlManager.getCurrentLevel().enemies.size(); i++)
+				lvlManager.getCurrentLevel().enemies.get(i).setAlive(false);
 			gameover = "You Lose";
 			stopAllSounds();
+			player.setAlive(false);
 			au_GameOver.play();
 			this.dispose();
 		}
 
 		if (!player.isAlive() & Lives == 1) {
+			for (int i = 0; i < lvlManager.getCurrentLevel().enemies.size(); i++)
+				lvlManager.getCurrentLevel().enemies.get(i).setAlive(false);
 			gameover = "Game Over";
 			stopAllSounds();
 			au_GameOver.play();
 			this.dispose();
+		}
+	}
+
+	public class playerMove extends Thread {
+
+		public boolean threadMoved;
+		public int threadMovement;
+
+		playerMove() {
+		}
+
+		void lol() {
+			if (GameKeys.isDown(GameKeys.LEFT)) {
+				threadMovement = Player.LEFT;
+				threadMoved = true;
+			} else if (GameKeys.isDown(GameKeys.UP)) {
+				threadMovement = Player.UP;
+				threadMoved = true;
+			} else if (GameKeys.isDown(GameKeys.RIGHT)) {
+				threadMovement = Player.RIGHT;
+				threadMoved = true;
+			} else if (GameKeys.isDown(GameKeys.DOWN)) {
+				threadMovement = Player.DOWN;
+				threadMoved = true;
+			} else {
+				threadMovement = Player.STOPPED;
+				threadMoved = false;
+			}
+		}
+
+		public void run() {
+			while (true) {
+				if (player.isAlive()) {
+					lol();
+//					System.out.println("HELLO PLAYER");
+					try {
+						sleep(1);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				} else {
+					System.out.println("ПОКА !!!");
+					break;
+				}
+			}
 		}
 	}
 

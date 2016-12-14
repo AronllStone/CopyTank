@@ -35,7 +35,7 @@ abstract class GameObject {
 	protected float stateTime;
 
 	protected int currentState = IDLE;
-	protected int currentFacing = RIGHT;
+	protected int currentFacing = UP;
 
 	protected Vector2 position;
 	protected Vector2 velocity;
@@ -59,7 +59,7 @@ abstract class GameObject {
 		this.position = position;
 		this.screengam = screengam;
 		origin = new Vector2(position.x + 16, position.y + 16);
-		rotation = 0f;
+		rotation = 90f;
 		bullets = new ArrayList<Bullet>();
 		stateTime = 0f;
 		spriteSheet = new Texture(Gdx.files.internal("TanksSpriteSheet.png"));
@@ -218,10 +218,6 @@ abstract class GameObject {
 		// Update Bullet Array
 		for (int i = 0; i < bullets.size(); i++) {
 
-			if (lvlManager.getCurrentLevel().resolveUnDestructible(bullets.get(i).getCollisionRect())) {
-				bullets.get(i).setAlive(false);
-				continue;
-			}
 			if (lvlManager.getCurrentLevel().resolveDestructible(bullets.get(i).getCollisionRect())) {
 				bullets.get(i).setAlive(false);
 				continue;
@@ -236,6 +232,12 @@ abstract class GameObject {
 				continue;
 			}
 
+			if (lvlManager.getCurrentLevel().resolveUnDestructible(bullets.get(i).getCollisionRect())) {
+				bullets.get(i).setAlive(false);
+				bullets.remove(i);
+				i--;
+				continue;
+			}
 			if (!bullets.get(i).getAlive()) {
 				bullets.remove(i);
 			} else {

@@ -20,6 +20,7 @@ public class Enemy extends GameObject {
 	public int id;
 	public boolean draw;
 	public boolean seePlayer = false;
+	funcMovement funcMovement;
 
 
 	public Enemy(Texture spriteSheet, Vector2 position, int spriteSheetRows,
@@ -34,8 +35,12 @@ public class Enemy extends GameObject {
 		this.id = id;
 		draw = true;
 
+		funcMovement = new funcMovement(id, this);
+		funcMovement.setDaemon(true);
+		funcMovement.start();
 
-		randomMovement();
+//		randomMovement();
+		setVelocity(funcMovement.threadVelocity);
 	}
 
 	public boolean isAlive() {
@@ -116,6 +121,113 @@ public class Enemy extends GameObject {
 		}
 	}
 
+	public class funcMovement extends Thread {
+
+		int id;
+		Enemy enemy;
+		public int threadVelocity;
+
+		funcMovement(int id, Enemy enemy) {
+			this.id = id;
+			this.enemy = enemy;
+		}
+
+		public void run() {
+			while (true) {
+				if (enemy.alive) {
+					random = (screengas == 1) ? (int) (GameScreen.random.nextDouble() * 100) : ((screengas == 2) ? (int) (GameScreenServer.random.nextDouble() * 100) : ((screengas == 3) ? (int) (GameScreenClient.random.nextDouble() * 100) : 0));
+
+					switch (currentFacing) {
+						case LEFT:
+							if (random < 10) { //Turn up
+								threadVelocity = RIGHT;
+//								setVelocity(RIGHT);
+							} else if (random < 50) { //Turn Down
+								threadVelocity = DOWN;
+//								setVelocity(DOWN);
+							} else if (random < 75) { // Turn RIGHT
+								threadVelocity = UP;
+//								setVelocity(UP);
+							} else { //Idle
+								threadVelocity = STOPPED;
+//								setVelocity(STOPPED);
+							}
+							break;
+						case RIGHT:
+							if (random < 10) { //Turn Down
+								threadVelocity = LEFT;
+//								setVelocity(LEFT);
+							} else if (random < 30) { //Turn Left
+								threadVelocity = DOWN;
+//								setVelocity(DOWN);
+							} else if (random < 75) { // Turn Up
+								threadVelocity = UP;
+//								setVelocity(UP);
+							} else { //Idle
+								threadVelocity = STOPPED;
+//								setVelocity(STOPPED);
+							}
+							break;
+						case UP:
+							if (random < 10) { //Turn Right
+								threadVelocity = DOWN;
+//								setVelocity(DOWN);
+							} else if (random < 50) { //Turn Down
+								threadVelocity = LEFT;
+//								setVelocity(LEFT);
+							} else if (random < 75) { // Turn Left
+								threadVelocity = RIGHT;
+// 								setVelocity(RIGHT);
+							} else { //Idle
+								threadVelocity = STOPPED;
+//								setVelocity(STOPPED);
+							}
+						case DOWN:
+							if (random < 10) { //Turn Right
+								threadVelocity = UP;
+//								setVelocity(UP);
+							} else if (random < 50) { //Turn Left
+								threadVelocity = LEFT;
+//								setVelocity(LEFT);
+							} else if (random < 75) { // Turn Up
+								threadVelocity = RIGHT;
+// 								setVelocity(RIGHT);
+							} else { //Idle
+								threadVelocity = STOPPED;
+// 								setVelocity(STOPPED);
+							}
+							break;
+						case IDLE:
+							if (random < 25) { //Turn Right
+								threadVelocity = RIGHT;
+//								setVelocity(RIGHT);
+							} else if (random < 50) { //Turn Down
+								threadVelocity = DOWN;
+//								setVelocity(DOWN);
+							} else if (random < 75) { // Turn UP
+								threadVelocity = UP;
+//								setVelocity(UP);
+							} else if (random < 100) { // Turn Left
+								threadVelocity = LEFT;
+//								setVelocity(LEFT);
+							}
+							break;
+					}
+					/*System.out.println("hello " + id + "  === " + enemy.currentFacing);
+					try {
+						sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}*/
+				} else {
+					System.out.println("bye bye " + id);
+					break;
+				}
+			}
+
+		}
+	}
+
 	@Override
 	public void update(float dt) {
 
@@ -124,16 +236,17 @@ public class Enemy extends GameObject {
 			double mathRand = 0;
 			shootcount++;
 
-			if (screengas == 1)
+			/*if (screengas == 1)
 				mathRand = GameScreen.random.nextDouble();
 			else if (screengas == 2)
 				mathRand = GameScreenServer.random.nextDouble();
 			else if (screengas == 3)
-				mathRand = GameScreenClient.random.nextDouble();
+				mathRand = GameScreenClient.random.nextDouble();*/
 
 
 			if ((super.previousX - getPosition().x == 0) && (super.previousY - getPosition().y == 0)) {
-				randomMovement();
+//				randomMovement();
+				setVelocity(funcMovement.threadVelocity);
 			}
 
 			float EnemyOnLinePlayerX = GameScreen.player.getPosition().x - getPosition().x;
@@ -178,7 +291,7 @@ public class Enemy extends GameObject {
 				}
 			}
 
-			if (mathRand < .01) {
+			if (random < 10) {
 				if (shootcount > 30) {
 					shoot(Bullet.BULLET_ENEMY);
 					shootcount = 0;

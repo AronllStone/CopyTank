@@ -274,7 +274,7 @@ public class Level {
 			if (enemies.get(i).draw)
 				if (enemies.get(i).getCollisionRect().overlaps(r)) {
 					enemies.get(i).setAlive(false);
-					lol.put(true,enemies.get(i).getPosition());
+					lol.put(true, enemies.get(i).getPosition());
 					System.out.println("enemy " + i);
 					enemiesDown++;
 					return lol;
@@ -312,7 +312,7 @@ public class Level {
 		return false;
 	}
 
-	public boolean resolveEnemysBulletCollisions(Rectangle r, int id) {
+	public boolean resolveEnemiesBulletCollisions(Rectangle r, int id) {
 		for (int i = 0; i < enemies.size(); i++) {
 			if (enemies.get(i).getId() == id)
 				continue;
@@ -358,61 +358,62 @@ public class Level {
 					enemies.get(i).setVelocity(Enemy.STOPPED);
 				}
 				for (int j = 0; j < enemies.get(i).getBullets().size(); j++) {
-					if (resolveDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
-						enemies.get(i).getBullets().get(j).setAlive(false);
-					}
-					if (resolvePlayerOnEnemyCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
-						enemies.get(i).getBullets().get(j).setAlive(false);
-					}
-					if (resolveBase(enemies.get(i).getBullets().get(j).getCollisionRect())) {
-						enemies.get(i).getBullets().get(j).setAlive(false);
-					}
-					if (resolvePlayerCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
-						enemies.get(i).getBullets().get(j).setAlive(false);
-					}
 					if (resolveBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
 						enemies.get(i).getBullets().get(j).setAlive(false);
 					}
-					if (resolveEnemysBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect(), enemies.get(i).getId())) {
+					if (resolveEnemiesBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect(), enemies.get(i).getId())) {
 						enemies.get(i).getBullets().get(j).setAlive(false);
 					}
-					if (resolveUnDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+//					if (resolveDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+//						enemies.get(i).getBullets().get(j).setAlive(false);
+//					}
+					if (resolvePlayerOnEnemyCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {	//TODO обработка столкновений пуль о ботов
 						enemies.get(i).getBullets().get(j).setAlive(false);
-						enemies.get(i).getBullets().remove(j);
-						j--;
 					}
+//					if (resolveBase(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+//						enemies.get(i).getBullets().get(j).setAlive(false);
+//					}
+//					if (resolvePlayerCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+//						enemies.get(i).getBullets().get(j).setAlive(false);
+//					}
+//					if (resolveUnDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+//						enemies.get(i).getBullets().get(j).setAlive(false);
+//						enemies.get(i).getBullets().remove(j);
+//						j--;
+//					}
 
 				}
 				enemies.get(i).update(dt);
 			} else {
 				System.out.println(enemies.get(i).getBullets().size());
 				if (enemies.get(i).getBullets().size() == 0) {
+					enemies.get(i).setAlive(false);
 					enemies.remove(i);
 				} else {
 					for (int j = 0; j < enemies.get(i).getBullets().size(); j++) {
-						if (resolveDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
-							enemies.get(i).getBullets().get(j).setAlive(false);
-						}
-						if (resolvePlayerOnEnemyCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
-							enemies.get(i).getBullets().get(j).setAlive(false);
-						}
-						if (resolveBase(enemies.get(i).getBullets().get(j).getCollisionRect())) {
-							enemies.get(i).getBullets().get(j).setAlive(false);
-						}
-						if (resolvePlayerCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
-							enemies.get(i).getBullets().get(j).setAlive(false);
-						}
 						if (resolveBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
 							enemies.get(i).getBullets().get(j).setAlive(false);
 						}
-						if (resolveEnemysBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect(), enemies.get(i).getId())) {
+						if (resolveEnemiesBulletCollisions(enemies.get(i).getBullets().get(j).getCollisionRect(), enemies.get(i).getId())) {
 							enemies.get(i).getBullets().get(j).setAlive(false);
 						}
-						if (resolveUnDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+						if (resolvePlayerOnEnemyCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {	//TODO обработка столкновений пуль о ботов
 							enemies.get(i).getBullets().get(j).setAlive(false);
-							enemies.get(i).getBullets().remove(j);
-							j--;
 						}
+//						if (resolveDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+//							enemies.get(i).getBullets().get(j).setAlive(false);
+//						}
+//						if (resolveBase(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+//							enemies.get(i).getBullets().get(j).setAlive(false);
+//						}
+//						if (resolvePlayerCollisions(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+//							enemies.get(i).getBullets().get(j).setAlive(false);
+//						}
+//						if (resolveUnDestructible(enemies.get(i).getBullets().get(j).getCollisionRect())) {
+//							enemies.get(i).getBullets().get(j).setAlive(false);
+//							enemies.get(i).getBullets().remove(j);
+//							j--;
+//						}
 					}
 					enemies.get(i).draw = false;
 					enemies.get(i).update(dt);
